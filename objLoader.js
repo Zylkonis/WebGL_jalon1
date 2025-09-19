@@ -352,11 +352,11 @@
    *     gl.drawElements(gl.TRIANGLES, model.mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
    */
   OBJ.initMeshBuffers = function( gl, mesh ){
-		mesh.vertexBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.vertices), gl.STATIC_DRAW);
-		mesh.vertexBuffer.itemSize = 3;
-		mesh.vertexBuffer.numItems = mesh.vertices.length / 3;
+    mesh.vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.vertices), gl.STATIC_DRAW);
+    mesh.vertexBuffer.itemSize = 3;
+    mesh.vertexBuffer.numItems = mesh.vertices.length / 3;
 
     mesh.normalBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);

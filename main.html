@@ -1,13 +1,15 @@
-<html>
+<html lang="">
 
 <head>
 	<title>WebGL - Canvas test</title>
-	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"/>
+	<link href="styles/style.css" rel="stylesheet" type="text/css" />
 
 	<script type="text/javascript" src="glMatrix.js"></script>
 	<script type="text/javascript" src="callbacks.js"></script>
 	<script type="text/javascript" src="glCourseBasis.js"></script>
 	<script type="text/javascript" src="objLoader.js"></script>
+	<script type="text/javascript" src="interface.js"></script>
 
 </head>
 
@@ -15,6 +17,19 @@
 <body onload="webGLStart();">
 	<canvas id="WebGL-test" style="border:none;" width="800" height="600"></canvas>
 	<br><br>
+	<div>
+		<input type="file" id="filePicker" accept=".obj" onChange="objFilePicker(this.files[0]);"/>
+		<select id="fileSelect" onChange="objChangeSelect(this.value);">
+			<option value="bunny.obj">Bunny</option>
+			<option value="mustang.obj">Mustang</option>
+			<option value="porsche.obj">Porsche</option>
+			<option value="sphere.obj">Sphere</option>
+		</select>
+		<div>
+			<input type="checkbox" id="wireframeCheckbox" name="scales" onclick="changeToWireframe(this.checked);"/>
+			<label for="wireframeCheckbox">Wireframe</label>
+		</div>
+	</div>
 </body>
 
 

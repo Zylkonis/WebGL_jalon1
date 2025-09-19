@@ -11,6 +11,8 @@ var distCENTER;
 
 var OBJ1 = null;
 var PLANE = null;
+var OBJ_PATH = "obj/";
+var displayMode = false;
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -64,10 +66,21 @@ class objmesh {
 		if(this.shader && this.loaded==4 && this.mesh != null) {
 			this.setShadersParams();
 			this.setMatrixUniforms();
-			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
-			gl.drawElements(gl.TRIANGLES, this.mesh.indexBuffer.numItems, gl.UNSIGNED_INT, 0);
+
+            var check = document.getElementById("wireframeCheckbox").checked;
+            console.log(check);
+            if (check) {
+            	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.lineBuffer);
+                gl.drawElements(gl.LINES, this.mesh.lineBuffer.numItems, gl.UNSIGNED_INT, 0);
+            }
+            else {
+            	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
+                gl.drawElements(gl.TRIANGLES, this.mesh.indexBuffer.numItems, gl.UNSIGNED_INT, 0);
+            }
 		}
 	}
+
+	// --------------------------------------------
 }
 
 
@@ -182,6 +195,22 @@ function initGL(canvas)
 	}
 }
 
+function initWireframeBuffers(gl, mesh){
+    lines = [];
+    for (let i = 0; i < mesh.indices.length; i += 3) {
+    	let a = mesh.indices[i];
+    	let b = mesh.indices[i + 1];
+    	let c = mesh.indices[i + 2];
+
+    	lines.push(a,b,b,c,c,a);
+    }
+
+    mesh.lineBuffer = gl.createBuffer();
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.lineBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(lines), gl.STATIC_DRAW);
+    mesh.lineBuffer.numItems = lines.length;
+}
 
 // =====================================================
 loadObjFile = function(OBJ3D)
@@ -191,7 +220,8 @@ loadObjFile = function(OBJ3D)
 	xhttp.onreadystatechange = function() {
 		if (xhttp.readyState == 4 && xhttp.status == 200) {
 			var tmpMesh = new OBJ.Mesh(xhttp.responseText);
-			OBJ.initMeshBuffers(gl,tmpMesh);
+			OBJ.initMeshBuffers(gl, tmpMesh);
+			initWireframeBuffers(gl, tmpMesh);
 			OBJ3D.mesh=tmpMesh;
 		}
 	}
@@ -199,7 +229,7 @@ loadObjFile = function(OBJ3D)
 
 
 	xhttp.open("GET", OBJ3D.objName, true);
-  xhttp.overrideMimeType('text/plain');
+    xhttp.overrideMimeType('text/plain');
 	xhttp.send();
 }
 
@@ -284,7 +314,7 @@ function webGLStart() {
 	
 	PLANE = new plane();
 
-	OBJ1 = new objmesh('bunny.obj');
+	OBJ1 = new objmesh(OBJ_PATH+'bunny.obj');
 	//OBJ2 = new objmesh('porsche.obj');
 	
 	tick();
@@ -298,6 +328,15 @@ function drawScene() {
 	OBJ1.draw();
 	//OBJ2.draw();
 }
+
+// fonction appelée quand on change la sélection
+function changeObjLoaded(event) {
+    const index = event.target.value;
+    const selectedFile = loadedObjs[index];
+    const url = URL.createObjectURL(file);
+    OBJ1 = new objmesh(url);
+}
+
 
 
 
