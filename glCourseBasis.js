@@ -12,7 +12,8 @@ var distCENTER;
 var OBJ1 = null;
 var PLANE = null;
 var OBJ_PATH = "obj/";
-var displayMode = false;
+var SHADER_PATH = "shader/";
+var usedShader = "obj";
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -23,7 +24,7 @@ class objmesh {
 	// --------------------------------------------
 	constructor(objFname) {
 		this.objName = objFname;
-		this.shaderName = 'obj';
+		this.shaderName = SHADER_PATH+usedShader;
 		this.loaded = -1;
 		this.shader = null;
 		this.mesh = null;
@@ -68,7 +69,6 @@ class objmesh {
 			this.setMatrixUniforms();
 
             var check = document.getElementById("wireframeCheckbox").checked;
-            console.log(check);
             if (check) {
             	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.lineBuffer);
                 gl.drawElements(gl.LINES, this.mesh.lineBuffer.numItems, gl.UNSIGNED_INT, 0);
@@ -93,7 +93,7 @@ class plane {
 	
 	// --------------------------------------------
 	constructor() {
-		this.shaderName='plane';
+		this.shaderName= SHADER_PATH+'plane';
 		this.loaded=-1;
 		this.shader=null;
 		this.initAll();

@@ -10,3 +10,8 @@ function objChangeSelect(value){
 function changeToWireframe(value){
     displayMode = value;
 };
+
+function shaderChangeSelect(value){
+    usedShader = value;
+    OBJ1.setShadersParams();
+};

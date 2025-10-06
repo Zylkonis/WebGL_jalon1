@@ -4,3 +4,44 @@ select {
   padding: 10px;
   transition: 0.4s;
 }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-y: hidden; /* empêche scroll vertical */
+}
+
+
+/* Conteneur principal en flex */
+#container {
+    display: flex;
+    height: 100vh; /* prend toute la hauteur visible */
+    width: 100vw;
+    padding: 10px;
+    gap: 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+
+/* Canvas flexible, avec un ratio fixe 4:3 */
+#WebGL-test {
+    flex-grow: 1;
+    border: none;
+    /* Pour le dimensionnement via JS, on enlève width et height en ligne */
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3; /* Garde le ratio largeur/hauteur */
+}
+
+/* Bandeau à droite */
+#options {
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto; /* scroll interne si trop long */
+    max-height: 100%; /* ne dépasse pas le container */
+}
