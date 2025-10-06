@@ -14,6 +14,7 @@ var PLANE = null;
 var OBJ_PATH = "obj/";
 var SHADER_PATH = "shader/";
 var usedShader = "obj";
+var actualObj = 'bunny.obj'
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -30,7 +31,7 @@ class objmesh {
 		this.mesh = null;
 		
 		loadObjFile(this);
-		loadShaders(this);
+        loadShaders(this);
 	}
 
 	// --------------------------------------------
@@ -314,7 +315,7 @@ function webGLStart() {
 	
 	PLANE = new plane();
 
-	OBJ1 = new objmesh(OBJ_PATH+'bunny.obj');
+	OBJ1 = new objmesh(OBJ_PATH+actualObj);
 	//OBJ2 = new objmesh('porsche.obj');
 	
 	tick();
@@ -330,11 +331,8 @@ function drawScene() {
 }
 
 // fonction appelée quand on change la sélection
-function changeObjLoaded(event) {
-    const index = event.target.value;
-    const selectedFile = loadedObjs[index];
-    const url = URL.createObjectURL(file);
-    OBJ1 = new objmesh(url);
+function reloadObj(event) {
+    OBJ1 = new objmesh(OBJ_PATH+actualObj);
 }
 
 

@@ -4,7 +4,8 @@ function objFilePicker(file) {
 };
 
 function objChangeSelect(value){
-    OBJ1 = new objmesh(OBJ_PATH+value);
+    actualObj = value;
+    reloadObj();
 };
 
 function changeToWireframe(value){
@@ -13,5 +14,5 @@ function changeToWireframe(value){
 
 function shaderChangeSelect(value){
     usedShader = value;
-    OBJ1.setShadersParams();
+    reloadObj();
 };
