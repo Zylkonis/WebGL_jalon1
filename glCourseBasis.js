@@ -7,6 +7,12 @@ var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 var rotMatrix = mat4.create();
 var distCENTER;
+
+var uLightColor = [1.0, 1.0, 1.0]; // lumière blanche
+var Kd = [0.8, 0.8, 0.8]; // diffuse rouge-orangée
+var Ks = [0.2, 0.2, 0.2]; // réflexion blanche
+var shininess = 0.5; // brillance
+var li = 1.0; // intensité lumineuse
 // =====================================================
 
 var OBJ1 = null;
@@ -29,6 +35,7 @@ class objmesh {
 		this.loaded = -1;
 		this.shader = null;
 		this.mesh = null;
+        this.objColor = [1, 0, 0];
 		
 		loadObjFile(this);
         loadShaders(this);
@@ -51,7 +58,25 @@ class objmesh {
 		this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
 		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
 		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
+
+        this.loadBlingFongParam();
 	}
+
+    loadBlingFongParam(){
+        this.shader.uLightColor = gl.getUniformLocation(this.shader, "uLightColor");
+        this.shader.Ks = gl.getUniformLocation(this.shader, "Ks");
+        this.shader.Kd = gl.getUniformLocation(this.shader, "Kd");
+        this.shader.shininess = gl.getUniformLocation(this.shader, "shininess");
+        this.shader.objColor = gl.getUniformLocation(this.shader, "objColor");
+        this.shader.li = gl.getUniformLocation(this.shader, "li");
+
+        gl.uniform3fv(this.shader.uLightColor, uLightColor);
+        gl.uniform3fv(this.shader.Ks, Ks);
+        gl.uniform3fv(this.shader.Kd, Kd);
+        gl.uniform1f(this.shader.shininess, shininess);
+        gl.uniform3fv(this.shader.objColor, this.objColor);
+        gl.uniform1f(this.shader.li, li);
+    }
 	
 	// --------------------------------------------
 	setMatrixUniforms() {

@@ -21,15 +21,22 @@
         <div id="options">
             <input type="file" id="filePicker" accept=".obj" onChange="objFilePicker(this.files[0]);"/>
             <select id="objSelect" onChange="objChangeSelect(this.value);">
-                <option value="bunny.obj">Bunny</option>
+                <option value="bunny.obj" selected>Bunny</option>
                 <option value="mustang.obj">Mustang</option>
                 <option value="porsche.obj">Porsche</option>
                 <option value="sphere.obj">Sphere</option>
             </select>
             <select id="shaderSelect" onChange="shaderChangeSelect(this.value);">
-                <option value="obj">Obj shader</option>
+                <option value="obj" selected>Obj shader</option>
                 <option value="wire">Wire shader</option>
+                <option value="blingfong">Bling Fong shader</option>
             </select>
+            <div>
+                <input type="range" id="shini_value" name="shini_value" min="0.0" max="30.0" oninput="shaderChangeShini(this.value);"/>
+                <label for="shini_value">shininess</label>
+                <input type="range" id="li_value" name="li_value" min="0.0" max="5.0" oninput="shaderChangeLi(this.value);"/>
+                <label for="li_value">light intensity</label>
+            </div>
             <div>
                 <input type="checkbox" id="wireframeCheckbox" name="scales" onclick="changeToWireframe(this.checked);"/>
                 <label for="wireframeCheckbox">Wireframe</label>

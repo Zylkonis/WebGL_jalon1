@@ -16,3 +16,13 @@ function shaderChangeSelect(value){
     usedShader = value;
     reloadObj();
 };
+
+function shaderChangeShini(value){
+    shininess = value;
+    OBJ1.loadBlingFongParam();
+};
+
+function shaderChangeLi(value){
+    li = value;
+    OBJ1.loadBlingFongParam();
+};
