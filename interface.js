@@ -26,3 +26,8 @@ function shaderChangeLi(value){
     li = value;
     OBJ1.loadBlingFongParam();
 };
+
+function shaderChangeColor(value){
+    OBJ1.objColor = hexToNormalizedRGB(value);
+    OBJ1.loadBlingFongParam();
+};

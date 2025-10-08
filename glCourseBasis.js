@@ -360,6 +360,29 @@ function reloadObj(event) {
     OBJ1 = new objmesh(OBJ_PATH+actualObj);
 }
 
+function hexToNormalizedRGB(hex) {
+    // On enlève le '#' si présent
+    if (hex.startsWith('#')) {
+        hex = hex.slice(1);
+    }
+
+    // Supporte le format court (#abc) en le transformant en long (#aabbcc)
+    if (hex.length === 3) {
+        hex = hex.split('').map(ch => ch + ch).join('');
+    }
+
+    if (hex.length !== 6) {
+        throw new Error("Format hexadécimal invalide. Attendu 3 ou 6 caractères.");
+    }
+
+    // Extraction des composantes rouges, vertes, bleues
+    const r = parseInt(hex.slice(0, 2), 16) / 255;
+    const g = parseInt(hex.slice(2, 4), 16) / 255;
+    const b = parseInt(hex.slice(4, 6), 16) / 255;
+
+    return [r, g, b];
+}
+
 
 
 

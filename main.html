@@ -34,8 +34,13 @@
             <div>
                 <input type="range" id="shini_value" name="shini_value" min="0.0" max="30.0" oninput="shaderChangeShini(this.value);"/>
                 <label for="shini_value">shininess</label>
+            </div>
+            <div>
                 <input type="range" id="li_value" name="li_value" min="0.0" max="5.0" oninput="shaderChangeLi(this.value);"/>
                 <label for="li_value">light intensity</label>
+            </div>
+            <div>
+                <input type="color" onchange="shaderChangeColor(this.value);"/>
             </div>
             <div>
                 <input type="checkbox" id="wireframeCheckbox" name="scales" onclick="changeToWireframe(this.checked);"/>

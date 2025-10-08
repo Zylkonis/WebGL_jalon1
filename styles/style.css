@@ -45,3 +45,19 @@ html, body {
     overflow-y: auto; /* scroll interne si trop long */
     max-height: 100%; /* ne dépasse pas le container */
 }
+
+/* Style commun pour les conteneurs des range + label */
+#options > div > input[type="range"] {
+    display: block;
+    width: 100%;
+    margin-top: 0.25em;
+}
+
+/* Labels placés au-dessus des ranges */
+#options > div > label {
+    display: block;
+    font-size: 0.8em; /* police plus petite */
+    margin-bottom: 0.2em;
+    color: #333; /* couleur lisible */
+    cursor: pointer;
+}
