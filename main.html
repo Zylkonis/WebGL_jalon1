@@ -14,7 +14,7 @@
 </head>
 
 
-<body onload="webGLStart();">
+<body onload="webGLStart();" onresize="adaptCanvasSize();">
     <div id="container">
         <canvas id="WebGL-test" style="border:none;" width="800" height="600"></canvas>
 
@@ -43,8 +43,27 @@
                 <input type="color" onchange="shaderChangeColor(this.value);"/>
             </div>
             <div>
-                <input type="checkbox" id="wireframeCheckbox" name="scales" onclick="changeToWireframe(this.checked);"/>
+                <input type="checkbox" id="wireframeCheckbox" name="scales"/>
                 <label for="wireframeCheckbox">Wireframe</label>
+            </div>
+            <HR WIDTH="100%">
+            <div>
+                <fieldset>
+                    <input type="radio" id="plane_radio" value="plane" name="plane_type" checked oninput="changePlaneType(this.value)"/>
+                    <label for="plane_radio">Plane</label>
+
+                    <input type="radio" id="bump_radio" value="bump" name="plane_type" oninput="changePlaneType(this.value)"/>
+                    <label for="bump_radio">Bump</label>
+
+                    <input type="radio" id="height_radio" value="height" name="plane_type"/>
+                    <label for="height_radio">Height</label>
+                </fieldset>
+            </div>
+            <div>
+                <input type="file" id="bmpPicker" accept=".png" onChange="bmpFilePicker(this.files[0]);"/>
+            </div>
+            <div>
+                <input type="color" onchange="planeChangeColor(this.value);"/>
             </div>
         </div>
     </div>

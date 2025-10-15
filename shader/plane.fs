@@ -2,6 +2,7 @@
 precision mediump float;
 
 varying vec2 texCoords;
+uniform vec3 objColor;
 
 void main(void)
 {
@@ -16,7 +17,7 @@ void main(void)
 	if(px == 0.0 && py == 0.0) gl_FragColor = vec4(0.5+dx*dy/0.4,0.5+dx*dy/0.4,0.5+dx*dy/0.4,1.0);
 	else if(px == 0.0) gl_FragColor = vec4(0.5+dx,0.5+dx,0.5+dx,1.0);
 	else if(py == 0.0) gl_FragColor = vec4(0.5+dy,0.5+dy,0.5+dy,1.0);
-	else gl_FragColor = vec4(0.9,0.9,0.9,1.0);
+	else gl_FragColor = vec4(objColor,1.0);
 }
 
 

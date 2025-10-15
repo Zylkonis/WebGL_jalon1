@@ -31,18 +31,16 @@ html, body {
     flex-grow: 1;
     border: none;
     /* Pour le dimensionnement via JS, on enlève width et height en ligne */
-    max-width: 100%;
-    height: auto;
+    width: auto;
+    height: 100%;
     aspect-ratio: 4 / 3; /* Garde le ratio largeur/hauteur */
 }
 
 /* Bandeau à droite */
 #options {
-    width: 250px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    overflow-y: auto; /* scroll interne si trop long */
     max-height: 100%; /* ne dépasse pas le container */
 }
 

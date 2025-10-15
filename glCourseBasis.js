@@ -17,10 +17,9 @@ var li = 1.0; // intensité lumineuse
 
 var OBJ1 = null;
 var PLANE = null;
-var OBJ_PATH = "obj/";
-var SHADER_PATH = "shader/";
-var usedShader = "obj";
-var actualObj = 'bunny.obj'
+var OBJ_PATH = 'obj/';
+var SHADER_PATH = 'shader/';
+var IMG_PATH = 'img/'
 
 // =====================================================
 // OBJET 3D, lecture fichier obj
@@ -29,17 +28,31 @@ var actualObj = 'bunny.obj'
 class objmesh {
 
 	// --------------------------------------------
-	constructor(objFname) {
-		this.objName = objFname;
-		this.shaderName = SHADER_PATH+usedShader;
-		this.loaded = -1;
-		this.shader = null;
-		this.mesh = null;
+	constructor(objFname, isLoadByURL) {
+        this.usedObj = 'bunny.obj'
+        if(isLoadByURL)
+		    this.objName = objFname;
+        else
+            this.objName = OBJ_PATH+this.usedObj
+        this.usedShader = 'obj';
         this.objColor = [1, 0, 0];
-		
-		loadObjFile(this);
-        loadShaders(this);
+        this.shaderName = SHADER_PATH+this.usedShader;
+
+        this.Reload()
 	}
+
+    ReloadShader(){
+        this.shaderName = SHADER_PATH+this.usedShader;
+        this.Reload();
+    }
+
+    Reload() {
+        this.loaded = -1;
+        this.shader = null;
+        this.mesh = null;
+        loadObjFile(this);
+        loadShaders(this);
+    }
 
 	// --------------------------------------------
 	setShadersParams() {
@@ -119,14 +132,19 @@ class plane {
 	
 	// --------------------------------------------
 	constructor() {
-		this.shaderName= SHADER_PATH+'plane';
-		this.loaded=-1;
-		this.shader=null;
+        this.usedShader = 'plane';
+        this.imagePath = IMG_PATH+'Surface10.png';
+        this.texture = createSample2D(this.imagePath);
+        this.objColor = [1, 1, 1];
 		this.initAll();
 	}
 		
 	// --------------------------------------------
 	initAll() {
+        this.loaded=-1;
+        this.shader=null;
+        this.shaderName= SHADER_PATH+this.usedShader;
+
 		var size=1.0;
 		var vertices = [
 			-size, -size, 0.1,
@@ -172,8 +190,20 @@ class plane {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.tBuffer);
 		gl.vertexAttribPointer(this.shader.tAttrib,this.tBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
+        this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
 		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
+        this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
+        this.shader.objColor = gl.getUniformLocation(this.shader, "objColor");
+
+        // Get location of sampler2D uniform in the shader
+        const textureLocation = gl.getUniformLocation(this.shader, 'u_texture');
+
+        // Set the active texture unit (e.g., 0)
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+
+        // Set the sampler uniform to use texture unit 0
+        gl.uniform1i(textureLocation, 0);
 
 		mat4.identity(mvMatrix);
 		mat4.translate(mvMatrix, distCENTER);
@@ -181,6 +211,9 @@ class plane {
 
 		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
+        gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
+
+        gl.uniform3fv(this.shader.objColor, this.objColor);
 	}
 
 	// --------------------------------------------
@@ -340,8 +373,10 @@ function webGLStart() {
 	
 	PLANE = new plane();
 
-	OBJ1 = new objmesh(OBJ_PATH+actualObj);
-	//OBJ2 = new objmesh('porsche.obj');
+	OBJ1 = new objmesh(OBJ_PATH+'bunny.obj', false);
+	//OBJ2 = new objmesh();
+
+    adaptCanvasSize();
 	
 	tick();
 }
@@ -357,7 +392,7 @@ function drawScene() {
 
 // fonction appelée quand on change la sélection
 function reloadObj(event) {
-    OBJ1 = new objmesh(OBJ_PATH+actualObj);
+    OBJ1.Reload()
 }
 
 function hexToNormalizedRGB(hex) {
@@ -381,6 +416,52 @@ function hexToNormalizedRGB(hex) {
     const b = parseInt(hex.slice(4, 6), 16) / 255;
 
     return [r, g, b];
+}
+
+function createSample2D(imgName){
+    // Create a texture
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+// Provide texture image data
+    const image = new Image();
+    image.src = imgName;
+    image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+
+        // Upload the image into the texture
+        gl.texImage2D(
+            gl.TEXTURE_2D,    // target
+            0,                // level
+            gl.RGBA,          // internal format
+            gl.RGBA,          // format
+            gl.UNSIGNED_BYTE, // type
+            image             // image
+        );
+
+        // Set texture parameters (required)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    };
+    return texture;
+}
+
+function adaptCanvasSize(){
+    const canv = gl.canvas;
+    const width  = canv.clientWidth;
+    const height = canv.clientHeight;
+
+    canv.width = canv.clientWidth;
+    canv.height = canv.clientHeight;
+    gl.viewport(0, 0, width, height);
+
+    mat4.perspective(
+        45,
+        width / height,
+        0.1,
+        100.0,
+        pMatrix);
 }
 
 

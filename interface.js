@@ -1,33 +1,43 @@
 function objFilePicker(file) {
     const url = URL.createObjectURL(file);
-    OBJ1 = new objmesh(url);
-};
+    OBJ1.objName = url;
+    reloadObj();
+}
+
+function bmpFilePicker(file){
+    const url = URL.createObjectURL(file);
+    PLANE.texture = createSample2D(url);
+    PLANE.initAll();
+}
 
 function objChangeSelect(value){
-    actualObj = value;
+    OBJ1.actualObj = value;
+    OBJ1.objName = OBJ_PATH+OBJ1.actualObj;
     reloadObj();
-};
-
-function changeToWireframe(value){
-    displayMode = value;
-};
+}
 
 function shaderChangeSelect(value){
-    usedShader = value;
-    reloadObj();
-};
+    OBJ1.usedShader = value;
+    OBJ1.ReloadShader();
+}
 
 function shaderChangeShini(value){
     shininess = value;
-    OBJ1.loadBlingFongParam();
-};
+}
 
 function shaderChangeLi(value){
     li = value;
-    OBJ1.loadBlingFongParam();
-};
+}
 
 function shaderChangeColor(value){
     OBJ1.objColor = hexToNormalizedRGB(value);
-    OBJ1.loadBlingFongParam();
-};
+}
+
+function changePlaneType(value){
+    PLANE.usedShader = value;
+    PLANE.initAll();
+}
+
+function planeChangeColor(value){
+    PLANE.objColor = hexToNormalizedRGB(value);
+}
