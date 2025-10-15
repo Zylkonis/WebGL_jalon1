@@ -34,7 +34,20 @@ function shaderChangeColor(value){
 }
 
 function changePlaneType(value){
-    PLANE.usedShader = value;
+    if(value === "plane"){
+        PLANE.usedShader = value;
+        document.getElementById("bump_option").style.display = "none";
+        document.getElementById("height_option").style.display = "none";
+    }
+    if(value === "bump"){
+        PLANE.usedShader = value;
+        document.getElementById("bump_option").style.display = "block";
+        document.getElementById("height_option").style.display = "none";
+    }
+    if(value === "height"){
+        document.getElementById("bump_option").style.display = "none";
+        document.getElementById("height_option").style.display = "block";
+    }
     PLANE.initAll();
 }
 

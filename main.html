@@ -55,15 +55,20 @@
                     <input type="radio" id="bump_radio" value="bump" name="plane_type" oninput="changePlaneType(this.value)"/>
                     <label for="bump_radio">Bump</label>
 
-                    <input type="radio" id="height_radio" value="height" name="plane_type"/>
+                    <input type="radio" id="height_radio" value="height" name="plane_type" oninput="changePlaneType(this.value)"/>
                     <label for="height_radio">Height</label>
                 </fieldset>
             </div>
             <div>
+                <input type="color" onchange="planeChangeColor(this.value);"/>
+            </div>
+            <div id="bump_option" style="display:none">
+                <p class="option_title">Option de la bump map</p>
                 <input type="file" id="bmpPicker" accept=".png" onChange="bmpFilePicker(this.files[0]);"/>
             </div>
-            <div>
-                <input type="color" onchange="planeChangeColor(this.value);"/>
+            <div id="height_option" style="display:none">
+                <p class="option_title">Option de la height map</p>
+                <input type="file" id="heightPicker" accept=".png"/>
             </div>
         </div>
     </div>

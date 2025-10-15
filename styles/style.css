@@ -59,3 +59,8 @@ html, body {
     color: #333; /* couleur lisible */
     cursor: pointer;
 }
+
+.option_title {
+    text-align: center;
+    font-size: 0.9em;
+}
