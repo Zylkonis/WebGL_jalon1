@@ -10,9 +10,9 @@
 	<script type="text/javascript" src="glCourseBasis.js"></script>
 	<script type="text/javascript" src="objLoader.js"></script>
 	<script type="text/javascript" src="interface.js"></script>
-	<script type="text/javascript" src="heightMap.js"></script>
-    <script type="text/javascript" src="mesh/obj.js"></script>
-    <script type="text/javascript" src="mesh/objmesh.js"></script>
+    <script type="text/javascript" src="mesh/base_mesh.js"></script>
+    <script type="text/javascript" src="mesh/heightMap.js"></script>
+    <script type="text/javascript" src="mesh/obj_mesh.js"></script>
     <script type="text/javascript" src="mesh/plane.js"></script>
 
 </head>
@@ -45,7 +45,7 @@
                 <label for="li_value">light intensity</label>
             </div>
             <div>
-                <input type="range" id="heightScale" min="1" max="100" value="50" oninput="heightChange(this.value);"/>
+                <input type="range" id="heightScale" min="0.0" max="10.0" value="scale" oninput="heightChange(this.value);"/>
                 <label for="heightScale">Échelle de hauteur</label>
             </div>
             <div>

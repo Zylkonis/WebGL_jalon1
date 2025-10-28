@@ -162,9 +162,9 @@ function webGLStart() {
 
 	distCENTER = vec3.create([0,-0.2,-3]);
 
-	PLANE = new plane();
+	//PLANE = new plane();
 
-	OBJ1 = new objmesh(OBJ_PATH+'bunny.obj', false);
+	OBJ1 = new obj_mesh(OBJ_PATH+'bunny.obj', 'obj');
 	OBJ2 = new heightMap(IMG_PATH+	'texture1.png');
 
     adaptCanvasSize();
@@ -179,11 +179,6 @@ function drawScene() {
 
 	OBJ1.draw();
 	OBJ2.draw();
-}
-
-// fonction appelée quand on change la sélection
-function reloadObj(event) {
-    OBJ1.Reload()
 }
 
 function hexToNormalizedRGB(hex) {

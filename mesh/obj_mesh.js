@@ -1,4 +1,4 @@
-class objmesh extends base_mesh{
+class obj_mesh extends base_mesh{
 
     // --------------------------------------------
     constructor(objFname, shader) {

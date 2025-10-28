@@ -1,6 +1,6 @@
-var scale = 50;
+var scale = 5;
 
-class heightMap {
+class heightMap extends base_mesh {
     img;
     longueur;
     largeur;
@@ -10,10 +10,7 @@ class heightMap {
 
     // --------------------------------------------
     constructor(mapPath) {
-        this.shaderName = SHADER_PATH + 'gradient';
-        this.loaded = -1;
-        this.shader = null;
-        this.mesh = null;
+        super('gradient');
         this.ready = false;
 
         this.img = new Image();
@@ -32,13 +29,13 @@ class heightMap {
         };
 
         if (this.img.complete) {
-            this.initHM();
+            this.Init();
         } else {
-            this.img.onload = () => this.initHM();
+            this.img.onload = () => this.Init();
         }
     }
 
-    initHM() {
+    Init() {
         this.processMap();
         console.log("on lance le chargement du shader");
         loadShaders(this);
@@ -239,7 +236,7 @@ class heightMap {
     }
 
     setShadersParams() {
-        gl.useProgram(this.shader);
+        super.setShadersParams();
 
         this.shader.vAttrib = gl.getAttribLocation(this.shader, "aVertexPosition");
         gl.enableVertexAttribArray(this.shader.vAttrib);
@@ -259,26 +256,16 @@ class heightMap {
         }
 
         this.shader.rScale = gl.getUniformLocation(this.shader, "uScale");
-        this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
-        this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
-        this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
     }
 
     // --------------------------------------------
     setMatrixUniforms() {
-        mat4.identity(mvMatrix);
-        mat4.translate(mvMatrix, distCENTER);
-        mat4.multiply(mvMatrix, rotMatrix);
-
+        super.setMatrixUniforms();
         gl.uniform1f(this.shader.rScale, scale);
-        gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
-        gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
-        gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
     }
 
     // --------------------------------------------
     draw() {
-        console.log("état de ready : "+this.ready);
         if (!this.ready) return;
 
         if (this.shader && this.loaded == 4 && this.mesh != null) {
