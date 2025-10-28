@@ -16,10 +16,11 @@ var li = 1.0; // intensité lumineuse
 // =====================================================
 
 var OBJ1 = null;
+var OBJ2 = null;
 var PLANE = null;
 var OBJ_PATH = 'obj/';
-var SHADER_PATH = 'shader/';
 var IMG_PATH = 'img/'
+var SHADER_PATH = 'shader/';
 
 
 // =====================================================
@@ -160,11 +161,11 @@ function webGLStart() {
 	mat4.rotate(rotMatrix, rotY, [0, 0, 1]);
 
 	distCENTER = vec3.create([0,-0.2,-3]);
-	
+
 	PLANE = new plane();
 
-	OBJ1 = new objmesh(OBJ_PATH+'bunny.obj', 'obj');
-	//OBJ2 = new objmesh();
+	OBJ1 = new objmesh(OBJ_PATH+'bunny.obj', false);
+	OBJ2 = new heightMap(IMG_PATH+	'texture1.png');
 
     adaptCanvasSize();
 	
@@ -174,8 +175,15 @@ function webGLStart() {
 // =====================================================
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
-	PLANE.draw();
+	//PLANE.draw();
+
 	OBJ1.draw();
+	OBJ2.draw();
+}
+
+// fonction appelée quand on change la sélection
+function reloadObj(event) {
+    OBJ1.Reload()
 }
 
 function hexToNormalizedRGB(hex) {

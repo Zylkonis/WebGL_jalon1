@@ -1,20 +1,16 @@
-
-// =====================================================
-// Map de hauteur, lecture image
-// =====================================================
+var scale = 50;
 
 class heightMap {
     img;
     longueur;
     largeur;
-    hauteurMin;
-    hauteurMax;
 
     heights;
 
+
     // --------------------------------------------
     constructor(mapPath) {
-        this.shaderName = 'obj';
+        this.shaderName = SHADER_PATH + 'gradient';
         this.loaded = -1;
         this.shader = null;
         this.mesh = null;
@@ -22,30 +18,35 @@ class heightMap {
 
         this.img = new Image();
         this.img.src = mapPath;
-            this.longueur = this.img.width;
+        this.longueur = this.img.width;
         this.largeur = this.img.height;
-        this.hauteurMin = 0;
-        this.hauteurMax = 100;
 
         this.heights = [];
 
         this.mesh = {
             vertexBuffer: [],
             normalBuffer: [],
-            indexBuffer: [],
+            colorBuffer: [],
+            indices: [],
             lineBuffer: []
         };
 
         if (this.img.complete) {
-            this.processMap();
+            this.initHM();
         } else {
-            this.img.onload = () => this.processMap();
+            this.img.onload = () => this.initHM();
         }
+    }
 
+    initHM() {
+        this.processMap();
+        console.log("on lance le chargement du shader");
         loadShaders(this);
     }
 
     processMap() {
+        this.heights = [];
+
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
         canvas.width = this.longueur;
@@ -56,11 +57,11 @@ class heightMap {
         const imgData = ctx.getImageData(0, 0, this.largeur, this.longueur);
         const pixels = imgData.data;
 
-        for (let y = this.longueur - 1; y >= 0; y--) { // 🔁 au lieu de y = 0; y < this.longueur
+        for (let y = this.longueur - 1; y >= 0; y--) {
             for (let x = 0; x < this.largeur; x++) {
                 const i = (y * this.longueur + x) * 4;
                 const gray = pixels[i];
-                this.heights.push(gray / 255.0);
+                this.heights.push(gray/255.0);
             }
         }
 
@@ -72,23 +73,41 @@ class heightMap {
             for (let x = 0; x < this.longueur; x++) {
                 const h = this.heights[y * this.longueur + x];
                 this.mesh.vertexBuffer.push(x/70 - (this.largeur/2)/70, y/70 - (this.longueur/2)/70, h);
+
+                const t = h;
+
+                // Bleu foncé (0, 0, 0.5) -> Cyan (0, 1, 1) -> Vert (0, 1, 0) -> Jaune (1, 1, 0) -> Rouge (1, 0, 0)
+                let r, g, b;
+                if (t < 0.25) {
+                    // Bleu foncé -> Cyan
+                    const localT = t / 0.25;
+                    r = 0;
+                    g = localT;
+                    b = 0.5 + 0.5 * localT;
+                } else if (t < 0.5) {
+                    // Cyan -> Vert
+                    const localT = (t - 0.25) / 0.25;
+                    r = 0;
+                    g = 1;
+                    b = 1 - localT;
+                } else if (t < 0.75) {
+                    // Vert -> Jaune
+                    const localT = (t - 0.5) / 0.25;
+                    r = localT;
+                    g = 1;
+                    b = 0;
+                } else {
+                    // Jaune -> Rouge
+                    const localT = (t - 0.75) / 0.25;
+                    r = 1;
+                    g = 1 - localT;
+                    b = 0;
+                }
+
+                this.mesh.colorBuffer.push(r, g, b, 1.0);
             }
         }
         this.buildNormalBuffer()
-    }
-
-    buildNormalBuffer2() {
-        for (let y = 0; y < this.largeur; y++) {
-            for (let x = 0; x < this.longueur; x++) {
-                const hL = x > 0 ? this.heights[y * this.longueur + (x - 1)] : this.heights[y * this.longueur + x];
-                const hR = x < this.longueur - 1 ? this.heights[y * this.longueur + (x + 1)] : this.heights[y * this.longueur + x];
-                const hD = y > 0 ? this.heights[(y - 1) * this.longueur + x] : this.heights[y * this.longueur + x];
-                const hU = y < this.largeur - 1 ? this.heights[(y + 1) * this.longueur + x] : this.heights[y * this.longueur + x];
-                const nx = hL - hR; const ny = 2.0; const nz = hD - hU; const len = Math.sqrt(nx * nx + ny * ny + nz * nz);
-                this.mesh.normalBuffer.push( nx / len, nz / len, ny / len );
-            }
-        }
-        this.buildIndices()
     }
 
     buildNormalBuffer() {
@@ -178,8 +197,8 @@ class heightMap {
                 const bottomRight = bottomLeft + 1;
 
                 // Deux triangles par carré
-                this.mesh.indexBuffer.push(topLeft, bottomLeft, topRight);
-                this.mesh.indexBuffer.push(topRight, bottomLeft, bottomRight);
+                this.mesh.indices.push(topLeft, bottomLeft, topRight);
+                this.mesh.indices.push(topRight, bottomLeft, bottomRight);
             }
         }
         this.buildBuffer()
@@ -200,17 +219,21 @@ class heightMap {
         this.normalBuffer.itemSize = 3;
         this.normalBuffer.numItems = this.mesh.normalBuffer.length / 3;
 
-        // this.textureBuffer = gl.createBuffer();
-        // gl.bindBuffer(gl.ARRAY_BUFFER, this.textureBuffer);
-        // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.texture), gl.STATIC_DRAW);
-        // this.textureBuffer.itemSize = 2;
-        // this.textureBuffer.numItems = this.texture.length / 2;
+        this.colorBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.mesh.colorBuffer), gl.STATIC_DRAW);
+        this.colorBuffer.itemSize = 4;
+        this.colorBuffer.numItems = this.mesh.colorBuffer.length / 4;
 
-        this.indexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(this.mesh.indexBuffer), gl.STATIC_DRAW);
-        this.indexBuffer.itemSize = 1;
-        this.indexBuffer.numItems = this.mesh.indexBuffer.length;
+        this.indices = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indices);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(this.mesh.indices), gl.STATIC_DRAW);
+        this.indices.itemSize = 1;
+        this.indices.numItems = this.mesh.indices.length;
+
+        initWireframeBuffers(gl, this.mesh);
+        // Copie le buffer wireframe dans l'instance
+        this.lineBuffer = this.mesh.lineBuffer;
 
         this.ready = true;
     }
@@ -228,6 +251,14 @@ class heightMap {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
         gl.vertexAttribPointer(this.shader.nAttrib, this.normalBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+        this.shader.cAttrib = gl.getAttribLocation(this.shader, "aVertexColor");
+        if (this.shader.cAttrib !== -1) {
+            gl.enableVertexAttribArray(this.shader.cAttrib);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
+            gl.vertexAttribPointer(this.shader.cAttrib, this.colorBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        }
+
+        this.shader.rScale = gl.getUniformLocation(this.shader, "uScale");
         this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
         this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
         this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
@@ -238,6 +269,8 @@ class heightMap {
         mat4.identity(mvMatrix);
         mat4.translate(mvMatrix, distCENTER);
         mat4.multiply(mvMatrix, rotMatrix);
+
+        gl.uniform1f(this.shader.rScale, scale);
         gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
         gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
         gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
@@ -245,6 +278,7 @@ class heightMap {
 
     // --------------------------------------------
     draw() {
+        console.log("état de ready : "+this.ready);
         if (!this.ready) return;
 
         if (this.shader && this.loaded == 4 && this.mesh != null) {
@@ -257,8 +291,8 @@ class heightMap {
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.lineBuffer);
                 gl.drawElements(gl.LINES, this.lineBuffer.numItems, gl.UNSIGNED_INT, 0);
             } else {
-                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-                gl.drawElements(gl.TRIANGLES, this.indexBuffer.numItems, gl.UNSIGNED_INT, 0);
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indices);
+                gl.drawElements(gl.TRIANGLES, this.indices.numItems, gl.UNSIGNED_INT, 0);
             }
         }
     }

@@ -28,6 +28,10 @@ function shaderChangeLi(value){
     li = value;
 }
 
+function heightChange(value){
+    scale = value;
+}
+
 function shaderChangeColor(value){
     OBJ1.objColor = hexToNormalizedRGB(value);
 }

@@ -10,6 +10,7 @@
 	<script type="text/javascript" src="glCourseBasis.js"></script>
 	<script type="text/javascript" src="objLoader.js"></script>
 	<script type="text/javascript" src="interface.js"></script>
+	<script type="text/javascript" src="heightMap.js"></script>
     <script type="text/javascript" src="mesh/obj.js"></script>
     <script type="text/javascript" src="mesh/objmesh.js"></script>
     <script type="text/javascript" src="mesh/plane.js"></script>
@@ -33,6 +34,7 @@
                 <option value="obj" selected>Obj shader</option>
                 <option value="wire">Wire shader</option>
                 <option value="blingfong">Bling Fong shader</option>
+                <option value="gradient">Gradient shader</option>
             </select>
             <div>
                 <input type="range" id="shini_value" name="shini_value" min="0.0" max="30.0" oninput="shaderChangeShini(this.value);"/>
@@ -41,6 +43,10 @@
             <div>
                 <input type="range" id="li_value" name="li_value" min="0.0" max="5.0" oninput="shaderChangeLi(this.value);"/>
                 <label for="li_value">light intensity</label>
+            </div>
+            <div>
+                <input type="range" id="heightScale" min="1" max="100" value="50" oninput="heightChange(this.value);"/>
+                <label for="heightScale">Échelle de hauteur</label>
             </div>
             <div>
                 <input type="color" onchange="shaderChangeColor(this.value);"/>
