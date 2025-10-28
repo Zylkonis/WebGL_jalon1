@@ -21,213 +21,6 @@ var OBJ_PATH = 'obj/';
 var SHADER_PATH = 'shader/';
 var IMG_PATH = 'img/'
 
-// =====================================================
-// OBJET 3D, lecture fichier obj
-// =====================================================
-
-class objmesh {
-
-	// --------------------------------------------
-	constructor(objFname, isLoadByURL) {
-        this.usedObj = 'bunny.obj'
-        if(isLoadByURL)
-		    this.objName = objFname;
-        else
-            this.objName = OBJ_PATH+this.usedObj
-        this.usedShader = 'obj';
-        this.objColor = [1, 0, 0];
-        this.shaderName = SHADER_PATH+this.usedShader;
-
-        this.Reload()
-	}
-
-    ReloadShader(){
-        this.shaderName = SHADER_PATH+this.usedShader;
-        this.Reload();
-    }
-
-    Reload() {
-        this.loaded = -1;
-        this.shader = null;
-        this.mesh = null;
-        loadObjFile(this);
-        loadShaders(this);
-    }
-
-	// --------------------------------------------
-	setShadersParams() {
-		gl.useProgram(this.shader);
-
-		this.shader.vAttrib = gl.getAttribLocation(this.shader, "aVertexPosition");
-		gl.enableVertexAttribArray(this.shader.vAttrib);
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.vertexBuffer);
-		gl.vertexAttribPointer(this.shader.vAttrib, this.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-		this.shader.nAttrib = gl.getAttribLocation(this.shader, "aVertexNormal");
-		gl.enableVertexAttribArray(this.shader.nAttrib);
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.normalBuffer);
-		gl.vertexAttribPointer(this.shader.nAttrib, this.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-		this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
-		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
-		this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
-
-        this.loadBlingFongParam();
-	}
-
-    loadBlingFongParam(){
-        this.shader.uLightColor = gl.getUniformLocation(this.shader, "uLightColor");
-        this.shader.Ks = gl.getUniformLocation(this.shader, "Ks");
-        this.shader.Kd = gl.getUniformLocation(this.shader, "Kd");
-        this.shader.shininess = gl.getUniformLocation(this.shader, "shininess");
-        this.shader.objColor = gl.getUniformLocation(this.shader, "objColor");
-        this.shader.li = gl.getUniformLocation(this.shader, "li");
-
-        gl.uniform3fv(this.shader.uLightColor, uLightColor);
-        gl.uniform3fv(this.shader.Ks, Ks);
-        gl.uniform3fv(this.shader.Kd, Kd);
-        gl.uniform1f(this.shader.shininess, shininess);
-        gl.uniform3fv(this.shader.objColor, this.objColor);
-        gl.uniform1f(this.shader.li, li);
-    }
-	
-	// --------------------------------------------
-	setMatrixUniforms() {
-		mat4.identity(mvMatrix);
-		mat4.translate(mvMatrix, distCENTER);
-		mat4.multiply(mvMatrix, rotMatrix);
-		gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
-		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
-		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
-	}
-	
-	// --------------------------------------------
-	draw() {
-		if(this.shader && this.loaded==4 && this.mesh != null) {
-			this.setShadersParams();
-			this.setMatrixUniforms();
-
-            var check = document.getElementById("wireframeCheckbox").checked;
-            if (check) {
-            	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.lineBuffer);
-                gl.drawElements(gl.LINES, this.mesh.lineBuffer.numItems, gl.UNSIGNED_INT, 0);
-            }
-            else {
-            	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
-                gl.drawElements(gl.TRIANGLES, this.mesh.indexBuffer.numItems, gl.UNSIGNED_INT, 0);
-            }
-		}
-	}
-
-	// --------------------------------------------
-}
-
-
-
-// =====================================================
-// PLAN 3D, Support géométrique
-// =====================================================
-
-class plane {
-	
-	// --------------------------------------------
-	constructor() {
-        this.usedShader = 'plane';
-        this.imagePath = IMG_PATH+'Surface10.png';
-        this.texture = createSample2D(this.imagePath);
-        this.objColor = [1, 1, 1];
-		this.initAll();
-	}
-		
-	// --------------------------------------------
-	initAll() {
-        this.loaded=-1;
-        this.shader=null;
-        this.shaderName= SHADER_PATH+this.usedShader;
-
-		var size=1.0;
-		var vertices = [
-			-size, -size, 0.1,
-			 size, -size, 0.1,
-			 size, size, 0.1,
-			-size, size, 0.1
-		];
-
-		var texcoords = [
-			0.0,0.0,
-			0.0,1.0,
-			1.0,1.0,
-			1.0,0.0
-		];
-
-		this.vBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-		this.vBuffer.itemSize = 3;
-		this.vBuffer.numItems = 4;
-
-		this.tBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.tBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texcoords), gl.STATIC_DRAW);
-		this.tBuffer.itemSize = 2;
-		this.tBuffer.numItems = 4;
-
-		loadShaders(this);
-	}
-	
-	
-	// --------------------------------------------
-	setShadersParams() {
-		gl.useProgram(this.shader);
-
-		this.shader.vAttrib = gl.getAttribLocation(this.shader, "aVertexPosition");
-		gl.enableVertexAttribArray(this.shader.vAttrib);
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vBuffer);
-		gl.vertexAttribPointer(this.shader.vAttrib, this.vBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-		this.shader.tAttrib = gl.getAttribLocation(this.shader, "aTexCoords");
-		gl.enableVertexAttribArray(this.shader.tAttrib);
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.tBuffer);
-		gl.vertexAttribPointer(this.shader.tAttrib,this.tBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-        this.shader.rMatrixUniform = gl.getUniformLocation(this.shader, "uRMatrix");
-		this.shader.mvMatrixUniform = gl.getUniformLocation(this.shader, "uMVMatrix");
-        this.shader.pMatrixUniform = gl.getUniformLocation(this.shader, "uPMatrix");
-        this.shader.objColor = gl.getUniformLocation(this.shader, "objColor");
-
-        // Get location of sampler2D uniform in the shader
-        const textureLocation = gl.getUniformLocation(this.shader, 'u_texture');
-
-        // Set the active texture unit (e.g., 0)
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.texture);
-
-        // Set the sampler uniform to use texture unit 0
-        gl.uniform1i(textureLocation, 0);
-
-		mat4.identity(mvMatrix);
-		mat4.translate(mvMatrix, distCENTER);
-		mat4.multiply(mvMatrix, rotMatrix);
-
-		gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
-		gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
-        gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
-
-        gl.uniform3fv(this.shader.objColor, this.objColor);
-	}
-
-	// --------------------------------------------
-	draw() {
-		if(this.shader && this.loaded==4) {		
-			this.setShadersParams();
-			
-			gl.drawArrays(gl.TRIANGLE_FAN, 0, this.vBuffer.numItems);
-			gl.drawArrays(gl.LINE_LOOP, 0, this.vBuffer.numItems);
-		}
-	}
-
-}
-
 
 // =====================================================
 // FONCTIONS GENERALES, INITIALISATIONS
@@ -284,9 +77,6 @@ loadObjFile = function(OBJ3D)
 			OBJ3D.mesh=tmpMesh;
 		}
 	}
-
-
-
 	xhttp.open("GET", OBJ3D.objName, true);
     xhttp.overrideMimeType('text/plain');
 	xhttp.send();
@@ -305,10 +95,10 @@ function loadShaderText(Obj3D,ext) {   // lecture asynchrone...
   var xhttp = new XMLHttpRequest();
   
   xhttp.onreadystatechange = function() {
-	if (xhttp.readyState == 4 && xhttp.status == 200) {
-		if(ext=='.vs') { Obj3D.vsTxt = xhttp.responseText; Obj3D.loaded ++; }
-		if(ext=='.fs') { Obj3D.fsTxt = xhttp.responseText; Obj3D.loaded ++; }
-		if(Obj3D.loaded==2) {
+	if (xhttp.readyState === 4 && xhttp.status === 200) {
+		if(ext==='.vs') { Obj3D.vsTxt = xhttp.responseText; Obj3D.loaded ++; }
+		if(ext==='.fs') { Obj3D.fsTxt = xhttp.responseText; Obj3D.loaded ++; }
+		if(Obj3D.loaded===2) {
 			Obj3D.loaded ++;
 			compileShaders(Obj3D);
 			Obj3D.loaded ++;
@@ -373,7 +163,7 @@ function webGLStart() {
 	
 	PLANE = new plane();
 
-	OBJ1 = new objmesh(OBJ_PATH+'bunny.obj', false);
+	OBJ1 = new objmesh(OBJ_PATH+'bunny.obj', 'obj');
 	//OBJ2 = new objmesh();
 
     adaptCanvasSize();
@@ -385,14 +175,7 @@ function webGLStart() {
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	PLANE.draw();
-
 	OBJ1.draw();
-	//OBJ2.draw();
-}
-
-// fonction appelée quand on change la sélection
-function reloadObj(event) {
-    OBJ1.Reload()
 }
 
 function hexToNormalizedRGB(hex) {

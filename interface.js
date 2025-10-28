@@ -1,24 +1,23 @@
 function objFilePicker(file) {
     const url = URL.createObjectURL(file);
     OBJ1.objName = url;
-    reloadObj();
+    OBJ1.Init();
 }
 
 function bmpFilePicker(file){
     const url = URL.createObjectURL(file);
     PLANE.texture = createSample2D(url);
-    PLANE.initAll();
+    PLANE.Init();
 }
 
 function objChangeSelect(value){
-    OBJ1.actualObj = value;
-    OBJ1.objName = OBJ_PATH+OBJ1.actualObj;
-    reloadObj();
+    OBJ1.objName = OBJ_PATH+value;
+    OBJ1.Init();
 }
 
 function shaderChangeSelect(value){
-    OBJ1.usedShader = value;
-    OBJ1.ReloadShader();
+    OBJ1.shaderName = SHADER_PATH+value;
+    OBJ1.Init();
 }
 
 function shaderChangeShini(value){
@@ -35,12 +34,14 @@ function shaderChangeColor(value){
 
 function changePlaneType(value){
     if(value === "plane"){
-        PLANE.usedShader = value;
+        PLANE.useBumpMap = false;
+        PLANE.shaderName = SHADER_PATH+value;
         document.getElementById("bump_option").style.display = "none";
         document.getElementById("height_option").style.display = "none";
     }
     if(value === "bump"){
-        PLANE.usedShader = value;
+        PLANE.useBumpMap = true;
+        PLANE.shaderName = SHADER_PATH+'blingfong';
         document.getElementById("bump_option").style.display = "block";
         document.getElementById("height_option").style.display = "none";
     }
@@ -48,7 +49,7 @@ function changePlaneType(value){
         document.getElementById("bump_option").style.display = "none";
         document.getElementById("height_option").style.display = "block";
     }
-    PLANE.initAll();
+    PLANE.Init();
 }
 
 function planeChangeColor(value){
