@@ -1,6 +1,5 @@
 function objFilePicker(file) {
-    const url = URL.createObjectURL(file);
-    OBJ1.objName = url;
+    OBJ1.objName = URL.createObjectURL(file);
     OBJ1.Init();
 }
 
@@ -8,6 +7,12 @@ function bmpFilePicker(file){
     const url = URL.createObjectURL(file);
     PLANE.texture = createSample2D(url);
     PLANE.Init();
+}
+
+function heightFilePicker(file){
+    const url = URL.createObjectURL(file);
+    console.log(url);
+    HEIGHT = new heightMap(url);
 }
 
 function objChangeSelect(value){
@@ -38,22 +43,29 @@ function shaderChangeColor(value){
 
 function changePlaneType(value){
     if(value === "plane"){
+        drawPlane = true;
         PLANE.useBumpMap = false;
+        drawHeightMap = false;
         PLANE.shaderName = SHADER_PATH+value;
         document.getElementById("bump_option").style.display = "none";
         document.getElementById("height_option").style.display = "none";
+        PLANE.Init();
     }
     if(value === "bump"){
+        drawPlane = true;
+        drawHeightMap = false;
         PLANE.useBumpMap = true;
         PLANE.shaderName = SHADER_PATH+'blingfong';
         document.getElementById("bump_option").style.display = "block";
         document.getElementById("height_option").style.display = "none";
+        PLANE.Init();
     }
     if(value === "height"){
+        drawPlane = false;
+        drawHeightMap = true;
         document.getElementById("bump_option").style.display = "none";
         document.getElementById("height_option").style.display = "block";
     }
-    PLANE.Init();
 }
 
 function planeChangeColor(value){

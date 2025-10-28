@@ -16,11 +16,14 @@ var li = 1.0; // intensité lumineuse
 // =====================================================
 
 var OBJ1 = null;
-var OBJ2 = null;
 var PLANE = null;
+var HEIGHT = null;
 var OBJ_PATH = 'obj/';
 var IMG_PATH = 'img/'
 var SHADER_PATH = 'shader/';
+
+var drawPlane = true;
+var drawHeightMap = false;
 
 
 // =====================================================
@@ -162,10 +165,10 @@ function webGLStart() {
 
 	distCENTER = vec3.create([0,-0.2,-3]);
 
-	//PLANE = new plane();
+	PLANE = new plane();
+    HEIGHT = new heightMap(IMG_PATH+'texture4.png');
 
 	OBJ1 = new obj_mesh(OBJ_PATH+'bunny.obj', 'obj');
-	OBJ2 = new heightMap(IMG_PATH+	'texture1.png');
 
     adaptCanvasSize();
 	
@@ -175,10 +178,12 @@ function webGLStart() {
 // =====================================================
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
-	//PLANE.draw();
 
 	OBJ1.draw();
-	OBJ2.draw();
+    if(drawPlane)
+        PLANE.draw();
+    if(drawHeightMap)
+        HEIGHT.draw();
 }
 
 function hexToNormalizedRGB(hex) {

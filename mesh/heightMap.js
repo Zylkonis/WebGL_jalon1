@@ -15,8 +15,7 @@ class heightMap extends base_mesh {
 
         this.img = new Image();
         this.img.src = mapPath;
-        this.longueur = this.img.width;
-        this.largeur = this.img.height;
+
 
         this.heights = [];
 
@@ -29,9 +28,15 @@ class heightMap extends base_mesh {
         };
 
         if (this.img.complete) {
+            this.longueur = this.img.width;
+            this.largeur = this.img.height;
             this.Init();
         } else {
-            this.img.onload = () => this.Init();
+            this.img.onload = () => {
+                this.longueur = this.img.width;
+                this.largeur = this.img.height;
+                this.Init();
+            }
         }
     }
 
