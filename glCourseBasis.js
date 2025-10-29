@@ -166,7 +166,7 @@ function webGLStart() {
 	distCENTER = vec3.create([0,-0.2,-3]);
 
 	PLANE = new plane();
-    HEIGHT = new heightMap(IMG_PATH+'texture4.png');
+    HEIGHT = new heightMap(IMG_PATH+'texture4.png', IMG_PATH+'water.png');
 
 	OBJ1 = new obj_mesh(OBJ_PATH+'bunny.obj', 'obj');
 

@@ -1,4 +1,4 @@
-var scale = 5;
+var scale = 50;
 
 class heightMap extends base_mesh {
     img;
@@ -6,16 +6,17 @@ class heightMap extends base_mesh {
     largeur;
 
     heights;
-
+    texture;
 
     // --------------------------------------------
-    constructor(mapPath) {
-        super('gradient');
+    constructor(mapPath, texturePath = null) {
+        super(texturePath ? 'texture' : 'gradient');
         this.ready = false;
+        this.textureReady = false;
+        this.useTexture = texturePath !== null;
 
         this.img = new Image();
         this.img.src = mapPath;
-
 
         this.heights = [];
 
@@ -23,9 +24,14 @@ class heightMap extends base_mesh {
             vertexBuffer: [],
             normalBuffer: [],
             colorBuffer: [],
+            textureBuffer: [],
             indices: [],
             lineBuffer: []
         };
+
+        if (texturePath) {
+            this.loadTexture(texturePath);
+        }
 
         if (this.img.complete) {
             this.longueur = this.img.width;
@@ -38,6 +44,22 @@ class heightMap extends base_mesh {
                 this.Init();
             }
         }
+    }
+
+    loadTexture(texturePath) {
+        this.texture = gl.createTexture();
+        const textureImage = new Image();
+        textureImage.onload = () => {
+            gl.bindTexture(gl.TEXTURE_2D, this.texture);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureImage);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+            gl.generateMipmap(gl.TEXTURE_2D);
+            gl.bindTexture(gl.TEXTURE_2D, null);
+            this.textureReady = true;
+            console.log("Texture chargée avec succès");
+        };
+        textureImage.src = texturePath;
     }
 
     Init() {
@@ -75,6 +97,11 @@ class heightMap extends base_mesh {
             for (let x = 0; x < this.longueur; x++) {
                 const h = this.heights[y * this.longueur + x];
                 this.mesh.vertexBuffer.push(x/70 - (this.largeur/2)/70, y/70 - (this.longueur/2)/70, h);
+
+                // Coordonnées de texture (0 à 1)
+                const u = x / (this.longueur - 1);
+                const v = y / (this.largeur - 1);
+                this.mesh.textureBuffer.push(u, v);
 
                 const t = h;
 
@@ -227,6 +254,12 @@ class heightMap extends base_mesh {
         this.colorBuffer.itemSize = 4;
         this.colorBuffer.numItems = this.mesh.colorBuffer.length / 4;
 
+        this.textureBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.textureBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.mesh.textureBuffer), gl.STATIC_DRAW);
+        this.textureBuffer.itemSize = 2;
+        this.textureBuffer.numItems = this.mesh.textureBuffer.length / 2;
+
         this.indices = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indices);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(this.mesh.indices), gl.STATIC_DRAW);
@@ -234,7 +267,6 @@ class heightMap extends base_mesh {
         this.indices.numItems = this.mesh.indices.length;
 
         initWireframeBuffers(gl, this.mesh);
-        // Copie le buffer wireframe dans l'instance
         this.lineBuffer = this.mesh.lineBuffer;
 
         this.ready = true;
@@ -260,13 +292,22 @@ class heightMap extends base_mesh {
             gl.vertexAttribPointer(this.shader.cAttrib, this.colorBuffer.itemSize, gl.FLOAT, false, 0, 0);
         }
 
+        this.shader.tAttrib = gl.getAttribLocation(this.shader, "aTextureCoord");
+        if (this.shader.tAttrib !== -1) {
+            gl.enableVertexAttribArray(this.shader.tAttrib);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.textureBuffer);
+            gl.vertexAttribPointer(this.shader.tAttrib, this.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        }
+
         this.shader.rScale = gl.getUniformLocation(this.shader, "uScale");
+
+        this.shader.samplerUniform = gl.getUniformLocation(this.shader, "uSampler");
     }
 
     // --------------------------------------------
     setMatrixUniforms() {
         super.setMatrixUniforms();
-        gl.uniform1f(this.shader.rScale, scale);
+        gl.uniform1f(this.shader.rScale, scale/50.0);
     }
 
     // --------------------------------------------
@@ -276,6 +317,12 @@ class heightMap extends base_mesh {
         if (this.shader && this.loaded == 4 && this.mesh != null) {
             this.setShadersParams();
             this.setMatrixUniforms();
+
+            if (this.useTexture && this.texture && this.textureReady) {
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, this.texture);
+                gl.uniform1i(this.shader.samplerUniform, 0);
+            }
 
             var check = document.getElementById("wireframeCheckbox").checked;
             console.log(check);
