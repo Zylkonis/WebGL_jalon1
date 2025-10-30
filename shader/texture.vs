@@ -9,11 +9,13 @@ uniform float uScale;
 
 varying vec3 vNormal;
 varying vec2 vTextureCoord;
+varying float vHeight;
 
 void main(void) {
-    vec3 aVertexPositionZ = aVertexPosition;
-    aVertexPositionZ.z *= uScale;
-    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPositionZ, 1.0);
+    vec3 scaledPosition = vec3(aVertexPosition.x, aVertexPosition.y, aVertexPosition.z * uScale / 40.0);
+
+    gl_Position = uPMatrix * uMVMatrix * vec4(scaledPosition, 1.0);
     vNormal = (uRMatrix * vec4(aVertexNormal, 0.0)).xyz;
     vTextureCoord = aTextureCoord;
+    vHeight = aVertexPosition.z;
 }
