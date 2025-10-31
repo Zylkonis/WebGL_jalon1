@@ -75,3 +75,13 @@ function changePlaneType(value){
 function planeChangeColor(value){
     PLANE.objColor = hexToNormalizedRGB(value);
 }
+
+function changeHeightShader(value){
+    if(document.getElementById("textureCheckbox").checked) {
+        HEIGHT.shaderName = SHADER_PATH+'gradient';
+    }
+    else{
+        HEIGHT.shaderName = SHADER_PATH+'texture';
+    }
+    loadShaders(HEIGHT);
+}
