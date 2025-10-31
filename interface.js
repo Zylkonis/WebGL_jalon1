@@ -12,7 +12,11 @@ function bmpFilePicker(file){
 function heightFilePicker(file){
     const url = URL.createObjectURL(file);
     console.log(url);
-    HEIGHT = new heightMap(url);
+    HEIGHT = new heightMap(url, [
+        IMG_PATH+'water.png',    // 0-20% : eau
+        IMG_PATH+'grass.png',   // 20-80% : herbe
+        IMG_PATH+'snow.png'     // 80-100% : neige
+    ]);
 }
 
 function objChangeSelect(value){
