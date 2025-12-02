@@ -81,9 +81,9 @@ function changePlaneType(value){
         document.getElementById("bump_option").style.display = "none";
         document.getElementById("mipmap_option").style.display = "block";
         document.getElementById("height_option").style.display = "none";
-        PLANE.InitMipMapTexture("Ground097_1K-PNG_Color.png", "PavingStones150_1K-PNG_Color.png",
-            "Ground097_1K-PNG_Displacement.png", "PavingStones150_1K-PNG_Displacement.png",
-            "texture2.png");
+        PLANE.InitMipMapTexture("Ground097_1K-PNG_Color.png", "Bricks097_1K-PNG_Color.png",
+            "Ground097_1K-PNG_Displacement.png", "Bricks097_1K-PNG_Displacement.png",
+            "texture3.png");
         PLANE.Init();
     }
 }

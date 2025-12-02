@@ -104,7 +104,7 @@ class heightMap extends base_mesh {
     }
 
     buildVertexbuffer() {
-        for (let y = this.largeur - 1; y >= 0; y--) {
+        for (let y = this.largeur - 1; y > 0; y--) {
             for (let x = 0; x < this.longueur; x++) {
                 const h = this.heights[y * this.longueur + x];
                 this.mesh.vertexBuffer.push(x/70 - (this.largeur/2)/70, y/70 - (this.longueur/2)/70, h);
@@ -154,7 +154,7 @@ class heightMap extends base_mesh {
         const normals = new Array(this.longueur * this.largeur * 3).fill(0);
 
         // Boucle sur chaque carré (même ordre que buildVertexbuffer : y décroissant)
-        for (let y = this.largeur - 1; y > 0; y--) {
+        for (let y = 0 ; y < this.largeur; y++) {
             for (let x = 0; x < this.longueur - 1; x++) {
 
                 // Indices des 4 sommets du carré
