@@ -22,11 +22,15 @@ void main(void) {
 
     vec4 finalColor;
 
-    if (noiseBrightness < 0.1) {
+    //TODO: 3-4 textures + sliders pour séparateurs et deltas
+    float sep1 = 0.25;
+    float delta1 = 0.15;
+
+    if (noiseBrightness < sep1 - delta1) {
         // Zone moyenne (0-25%) : t1 pure
         finalColor = vec4(texture2D(u_texture_1, texCoords).rgb, 1.0);
     }
-    else if (noiseBrightness < 0.9) {
+    else if (noiseBrightness < sep1 + delta1) {
         // (25-75%) : transition de t1 vers t2
         if (noiseBrightness + rgb_1 >  1.0 - noiseBrightness + rgb_2) {
             finalColor = vec4(texture2D(u_texture_1, texCoords).rgb, 1.0);
