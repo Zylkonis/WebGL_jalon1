@@ -52,6 +52,7 @@ function changePlaneType(value){
         drawHeightMap = false;
         PLANE.shaderName = SHADER_PATH+value;
         document.getElementById("bump_option").style.display = "none";
+        document.getElementById("mipmap_option").style.display = "none";
         document.getElementById("height_option").style.display = "none";
         PLANE.Init();
     }
@@ -61,6 +62,7 @@ function changePlaneType(value){
         PLANE.useBumpMap = true;
         PLANE.shaderName = SHADER_PATH+'blingfong';
         document.getElementById("bump_option").style.display = "block";
+        document.getElementById("mipmap_option").style.display = "none";
         document.getElementById("height_option").style.display = "none";
         PLANE.Init();
     }
@@ -68,7 +70,21 @@ function changePlaneType(value){
         drawPlane = false;
         drawHeightMap = true;
         document.getElementById("bump_option").style.display = "none";
+        document.getElementById("mipmap_option").style.display = "none";
         document.getElementById("height_option").style.display = "block";
+    }
+    if(value === "mipmap"){
+        drawPlane = true;
+        PLANE.useBumpMap = false;
+        drawHeightMap = false;
+        PLANE.shaderName = SHADER_PATH+"mipmap";
+        document.getElementById("bump_option").style.display = "none";
+        document.getElementById("mipmap_option").style.display = "block";
+        document.getElementById("height_option").style.display = "none";
+        PLANE.InitMipMapTexture("Bricks097_1K-PNG_Color.png", "PavingStones150_1K-PNG_Color.png",
+            "Bricks097_1K-PNG_Displacement.png", "PavingStones150_1K-PNG_Displacement.png",
+            "noiseTexture.png");
+        PLANE.Init();
     }
 }
 

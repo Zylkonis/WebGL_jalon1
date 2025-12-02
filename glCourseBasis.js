@@ -166,11 +166,11 @@ function webGLStart() {
 	distCENTER = vec3.create([0,-0.2,-3]);
 
 	PLANE = new plane();
-    HEIGHT = new heightMap(IMG_PATH+'texture2.png', [
+    /*HEIGHT = new heightMap(IMG_PATH+'texture2.png', [
 		IMG_PATH+'water.png',    // 0-20% : eau
 		IMG_PATH+'grass.png',   // 20-80% : herbe
 		IMG_PATH+'snow.png'     // 80-100% : neige
-	]);
+	]);*/
 
 	OBJ1 = new obj_mesh(OBJ_PATH+'bunny.obj', 'obj');
 

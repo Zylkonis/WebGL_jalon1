@@ -81,7 +81,8 @@ class plane extends base_mesh{
 
         // Get location of sampler2D uniform in the shader
         this.LoadTextureInShader();
-        this.loadBlingFongParam()
+        this.loadBlingFongParam();
+        this.LoadMipMapParameter();
     }
 
     // --------------------------------------------
