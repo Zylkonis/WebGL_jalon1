@@ -103,30 +103,38 @@ function changeHeightShader(value){
     loadShaders(HEIGHT);
 }
 
-function updateSliderBounds() {
-    const slider1 = document.getElementById('tresh_1to2_scale');
-    const slider2 = document.getElementById('tresh_2to3_scale');
-
-    // Slider 1: min=0, max=treshold_1to2 - alpha_1to2
-    slider1.min = 0.;
-    slider1.max = treshold_1to2 - alpha_1to2;
-    slider1.value = Math.min(parseFloat(slider1.value) || treshold_1to2, slider1.max);
-
-    // Slider 2: min=treshold_1to2 + alpha_1to2, max=treshold_2to3 - alpha_2to3
-    slider2.min = treshold_1to2 + alpha_1to2;
-    slider2.max = treshold_2to3 - alpha_2to3;
-    slider2.value = Math.max(Math.min(parseFloat(slider2.value) || treshold_2to3, slider2.max), slider2.min);
-}
-
 function changeTreshold_1to2(value) {
-    treshold_1to2 = parseFloat(value);
-    updateSliderBounds();
+    const slider1 = document.getElementById('tresh_1to2_scale');
+    const newValue = parseFloat(value);
+
+    // Bloquer la valeur si elle dépasse la limite haute
+    if(newValue > treshold_2to3 - alpha_1to2) {
+        slider1.value = treshold_2to3 - alpha_1to2;
+        treshold_1to2 = treshold_2to3 - alpha_1to2;
+    } else {
+        treshold_1to2 = newValue;
+    }
+
+    // Mettre à jour les limites du slider 2
+    const slider2 = document.getElementById('tresh_2to3_scale');
+    if(parseFloat(slider2.value) < treshold_1to2 + alpha_1to2) {
+        slider2.value = treshold_1to2 + alpha_1to2;
+        treshold_2to3 = treshold_1to2 + alpha_1to2;
+    }
 }
 
 function changeTreshold_2to3(value) {
-    treshold_2to3 = parseFloat(value);
-    updateSliderBounds();
-}
+    const slider2 = document.getElementById('tresh_2to3_scale');
+    const newValue = parseFloat(value);
 
-// Initialiser les sliders au chargement
-updateSliderBounds();
+    // Bloquer la valeur si elle est en dessous de la limite basse
+    if(newValue < treshold_1to2 + alpha_1to2) {
+        slider2.value = treshold_1to2 + alpha_1to2;
+        treshold_2to3 = treshold_1to2 + alpha_1to2;
+    } if(newValue > 1 - alpha_2to3) {
+        slider2.value = 1 - alpha_2to3;
+        treshold_2to3 = 1 - alpha_2to3;
+    } else {
+        treshold_2to3 = newValue;
+    }
+}
