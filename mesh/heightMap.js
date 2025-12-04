@@ -328,7 +328,7 @@ class heightMap extends base_mesh {
         this.shader.sampler2Uniform = gl.getUniformLocation(this.shader, "uSampler2");
 
         switch (this.shader) {
-            case "mipmap":
+            case "mipmapheight":
                 super.LoadMipMapParameter();
                 break;
         }
