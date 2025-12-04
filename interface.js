@@ -81,8 +81,9 @@ function changePlaneType(value){
         document.getElementById("bump_option").style.display = "none";
         document.getElementById("mipmap_option").style.display = "block";
         document.getElementById("height_option").style.display = "none";
-        PLANE.InitMipMapTexture("Ground097_1K-PNG_Color.png", "Bricks097_1K-PNG_Color.png",
-            "Ground097_1K-PNG_Displacement.png", "Bricks097_1K-PNG_Displacement.png",
+        PLANE.InitMipMapTexture(
+            "Ground097_1K-PNG_Color.png", "Bricks097_1K-PNG_Color.png", "PavingStones150_1K-PNG_Color.png",
+            "Ground097_1K-PNG_Displacement.png", "Bricks097_1K-PNG_Displacement.png", "PavingStones150_1K-PNG_Displacement.png",
             "texture3.png");
         PLANE.Init();
     }
@@ -101,3 +102,31 @@ function changeHeightShader(value){
     }
     loadShaders(HEIGHT);
 }
+
+function updateSliderBounds() {
+    const slider1 = document.getElementById('tresh_1to2_scale');
+    const slider2 = document.getElementById('tresh_2to3_scale');
+
+    // Slider 1: min=0, max=treshold_1to2 - alpha_1to2
+    slider1.min = 0.;
+    slider1.max = treshold_1to2 - alpha_1to2;
+    slider1.value = Math.min(parseFloat(slider1.value) || treshold_1to2, slider1.max);
+
+    // Slider 2: min=treshold_1to2 + alpha_1to2, max=treshold_2to3 - alpha_2to3
+    slider2.min = treshold_1to2 + alpha_1to2;
+    slider2.max = treshold_2to3 - alpha_2to3;
+    slider2.value = Math.max(Math.min(parseFloat(slider2.value) || treshold_2to3, slider2.max), slider2.min);
+}
+
+function changeTreshold_1to2(value) {
+    treshold_1to2 = parseFloat(value);
+    updateSliderBounds();
+}
+
+function changeTreshold_2to3(value) {
+    treshold_2to3 = parseFloat(value);
+    updateSliderBounds();
+}
+
+// Initialiser les sliders au chargement
+updateSliderBounds();

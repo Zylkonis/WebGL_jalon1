@@ -15,11 +15,16 @@ var shininess = 0.5; // brillance
 var li = 1.0; // intensité lumineuse
 // =====================================================
 
+var treshold_1to2 = 0.25;
+var treshold_2to3 = 0.60;
+var alpha_1to2 = 0.1;
+var alpha_2to3 = 0.15;
+
 var OBJ1 = null;
 var PLANE = null;
 var HEIGHT = null;
 var OBJ_PATH = 'obj/';
-var IMG_PATH = 'img/'
+var IMG_PATH = 'img/';
 var SHADER_PATH = 'shader/';
 
 var drawPlane = true;
@@ -183,7 +188,7 @@ function webGLStart() {
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
-	OBJ1.draw();
+	//OBJ1.draw();
     if(drawPlane)
         PLANE.draw();
     if(drawHeightMap)

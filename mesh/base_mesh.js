@@ -21,11 +21,13 @@ class base_mesh {
         this.mesh = null;
     }
 
-    InitMipMapTexture(T1_path, T2_path, T1grayscale_path, T2grayscale_path, noise_path){
+    InitMipMapTexture(T1_path, T2_path, T3_path, T1grayscale_path, T2grayscale_path, T3grayscale_path, noise_path){
         this.mipmap_T1 = createSample2D(IMG_PATH+T1_path);
         this.mipmap_T2 = createSample2D(IMG_PATH+T2_path);
+        this.mipmap_T3 = createSample2D(IMG_PATH+T3_path);
         this.mipmap_T1grayscale = createSample2D(IMG_PATH+T1grayscale_path);
         this.mipmap_T2grayscale = createSample2D(IMG_PATH+T2grayscale_path);
+        this.mipmap_T3grayscale = createSample2D(IMG_PATH+T3grayscale_path);
         this.mipmap_noise = createSample2D(IMG_PATH+noise_path);
     }
 
@@ -81,18 +83,35 @@ class base_mesh {
         gl.activeTexture(gl.TEXTURE2);
         gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T2);
         gl.uniform1i(textureLocation_2, 2);
-        const textureLocation_3 = gl.getUniformLocation(this.shader, 'u_texture_grayscale_1');
+        const textureLocation_3 = gl.getUniformLocation(this.shader, 'u_texture_3');
         gl.activeTexture(gl.TEXTURE3);
-        gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T1grayscale);
+        gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T3);
         gl.uniform1i(textureLocation_3, 3);
-        const textureLocation_4 = gl.getUniformLocation(this.shader, 'u_texture_grayscale_2');
+        const textureLocation_4 = gl.getUniformLocation(this.shader, 'u_texture_grayscale_1');
         gl.activeTexture(gl.TEXTURE4);
-        gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T2grayscale);
+        gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T1grayscale);
         gl.uniform1i(textureLocation_4, 4);
-        const textureLocation_5 = gl.getUniformLocation(this.shader, 'u_noise');
+        const textureLocation_5 = gl.getUniformLocation(this.shader, 'u_texture_grayscale_2');
         gl.activeTexture(gl.TEXTURE5);
-        gl.bindTexture(gl.TEXTURE_2D, this.mipmap_noise);
+        gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T2grayscale);
         gl.uniform1i(textureLocation_5, 5);
+        const textureLocation_6 = gl.getUniformLocation(this.shader, 'u_texture_grayscale_3');
+        gl.activeTexture(gl.TEXTURE6);
+        gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T3grayscale);
+        gl.uniform1i(textureLocation_6, 6);
+        const textureLocation_7 = gl.getUniformLocation(this.shader, 'u_noise');
+        gl.activeTexture(gl.TEXTURE7);
+        gl.bindTexture(gl.TEXTURE_2D, this.mipmap_noise);
+        gl.uniform1i(textureLocation_7, 7);
+        this.shader.treshold_1to2 = gl.getUniformLocation(this.shader, "treshold_1to2");
+        this.shader.treshold_2to3 = gl.getUniformLocation(this.shader, "treshold_2to3");
+        this.shader.alpha_1to2 = gl.getUniformLocation(this.shader, "alpha_1to2");
+        this.shader.alpha_2to3 = gl.getUniformLocation(this.shader, "alpha_2to3");
+        gl.uniform1f(this.shader.treshold_1to2, treshold_1to2);
+        gl.uniform1f(this.shader.treshold_2to3, treshold_2to3);
+        gl.uniform1f(this.shader.alpha_1to2, alpha_1to2);
+        gl.uniform1f(this.shader.alpha_2to3, alpha_2to3);
+
     }
 
     setMatrixUniforms() {
