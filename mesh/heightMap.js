@@ -10,7 +10,7 @@ class heightMap extends base_mesh {
     texturesReady;
 
     // --------------------------------------------
-    constructor(mapPath, texturePaths = null) {
+    constructor(mapPath, texturePaths = null, shader = ) {
         super(texturePaths ? 'texture' : 'gradient');
         this.ready = false;
         this.texturesReady = [false, false, false];

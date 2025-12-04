@@ -1,16 +1,12 @@
-precision mediump float;
-
-uniform sampler2D u_texture_1;
-uniform sampler2D u_texture_2;
-
-uniform sampler2D u_texture_grayscale_1;
-uniform sampler2D u_texture_grayscale_2;
-
-uniform sampler2D u_noise;
+precision mediump float; //varying vec4 pos3D;
 
 varying vec3 N;
-varying vec4 pos3D;
+uniform sampler2D u_noise;
 varying vec2 texCoords;
+
+uniform sampler2D u_texture_1;  uniform sampler2D u_texture_grayscale_1;
+uniform sampler2D u_texture_2;  uniform sampler2D u_texture_grayscale_2;
+uniform sampler2D u_texture_3;  uniform sampler2D u_texture_grayscale_3;
 
 void main(void) {
     float rgb_1 = texture2D(u_texture_grayscale_1, texCoords).r;
