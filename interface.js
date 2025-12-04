@@ -94,12 +94,7 @@ function planeChangeColor(value){
 }
 
 function changeHeightShader(value){
-    if(document.getElementById("textureCheckbox").checked) {
-        HEIGHT.shaderName = SHADER_PATH+'gradient';
-    }
-    else{
-        HEIGHT.shaderName = SHADER_PATH+'texture';
-    }
+    HEIGHT.shaderName = SHADER_PATH + value;
     loadShaders(HEIGHT);
 }
 

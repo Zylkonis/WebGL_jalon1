@@ -82,8 +82,16 @@
                     <label for="heightScale">Échelle de hauteur</label>
                 </div>
                 <div>
-                    <input type="checkbox" id="textureCheckbox" name="textCheck" onchange="changeHeightShader(this.value);"/>
-                    <label for="textureCheckbox">Gradient texture</label>
+                    <fieldset>
+                        <input type="radio" id="height_gradient_radio" value="gradient" name="height_type" checked oninput="changeHeightShader(this.value)"/>
+                        <label for="height_gradient_radio">Gradient</label>
+
+                        <input type="radio" id="height_texture_radio" value="texture" name="height_type" oninput="changeHeightShader(this.value)"/>
+                        <label for="height_texture_radio">Texture</label>
+
+                        <input type="radio" id="height_mipmap_radio" value="mipmapheight" name="height_type" oninput="changeHeightShader(this.value)"/>
+                        <label for="height_mipmap_radio">MipMap</label>
+                    </fieldset>
                 </div>
             </div>
             <div id="mipmap_option" style="display:none">
