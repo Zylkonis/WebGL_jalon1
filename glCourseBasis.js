@@ -146,7 +146,7 @@ function compileShaders(Obj3D)
 	gl.linkProgram(Obj3D.shader);
 	if (!gl.getProgramParameter(Obj3D.shader, gl.LINK_STATUS)) {
 		console.log("Could not initialise shaders");
-		console.log(gl.getShaderInfoLog(Obj3D.shader));
+		console.log(gl.getProgramInfoLog(Obj3D.shader));
 	}
 }
 
@@ -175,7 +175,8 @@ function webGLStart() {
 		IMG_PATH+'water.png',    // 0-20% : eau
 		IMG_PATH+'grass.png',   // 20-80% : herbe
 		IMG_PATH+'snow.png'     // 80-100% : neige
-	]);
+	],
+		'mipmapheight');
 
 	OBJ1 = new obj_mesh(OBJ_PATH+'bunny.obj', 'obj');
 

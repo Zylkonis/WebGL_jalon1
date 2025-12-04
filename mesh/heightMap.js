@@ -10,12 +10,20 @@ class heightMap extends base_mesh {
     texturesReady;
 
     // --------------------------------------------
-    constructor(mapPath, texturePaths = null) {
-        super(texturePaths ? 'texture' : 'gradient');
+    constructor(mapPath, texturePaths = null, shaderToUse = "texture") {
+
+        super(texturePaths ? shaderToUse : 'gradient');
         this.ready = false;
         this.texturesReady = [false, false, false];
         this.useTexture = texturePaths !== null;
         this.textures = [null, null, null];
+
+        if (this.shaderName === SHADER_PATH + "mipmapheight") {
+            this.InitMipMapTexture(
+                "Ground097_1K-PNG_Color.png", "Bricks097_1K-PNG_Color.png", "PavingStones150_1K-PNG_Color.png",
+                "Ground097_1K-PNG_Displacement.png", "Bricks097_1K-PNG_Displacement.png", "PavingStones150_1K-PNG_Displacement.png",
+                "texture3.png");
+        }
 
         this.img = new Image();
         this.img.src = mapPath;
@@ -305,7 +313,6 @@ class heightMap extends base_mesh {
             gl.vertexAttribPointer(this.shader.cAttrib, this.colorBuffer.itemSize, gl.FLOAT, false, 0, 0);
         }
 
-        // Support des textures (pour shader texture)
         this.shader.tAttrib = gl.getAttribLocation(this.shader, "aTextureCoord");
         if (this.shader.tAttrib !== -1) {
             gl.enableVertexAttribArray(this.shader.tAttrib);
@@ -319,6 +326,12 @@ class heightMap extends base_mesh {
         this.shader.sampler0Uniform = gl.getUniformLocation(this.shader, "uSampler0");
         this.shader.sampler1Uniform = gl.getUniformLocation(this.shader, "uSampler1");
         this.shader.sampler2Uniform = gl.getUniformLocation(this.shader, "uSampler2");
+
+        switch (this.shader) {
+            case "mipmap":
+                super.LoadMipMapParameter();
+                break;
+        }
     }
 
     // --------------------------------------------

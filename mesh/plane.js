@@ -74,7 +74,7 @@ class plane extends base_mesh{
         gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.normalBuffer);
         gl.vertexAttribPointer(this.shader.nAttrib, this.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-        this.shader.tAttrib = gl.getAttribLocation(this.shader, "aTexCoords");
+        this.shader.tAttrib = gl.getAttribLocation(this.shader, "aTextureCoord");
         gl.enableVertexAttribArray(this.shader.tAttrib);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.textureBuffer);
         gl.vertexAttribPointer(this.shader.tAttrib,this.mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);

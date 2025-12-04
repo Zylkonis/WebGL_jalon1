@@ -43,7 +43,7 @@ class base_mesh {
     }
 
     loadBlingFongParam(){
-        this.shader.tAttrib = gl.getAttribLocation(this.shader, "aTexCoords");
+        this.shader.tAttrib = gl.getAttribLocation(this.shader, "aTextureCoord");
         gl.enableVertexAttribArray(this.shader.tAttrib);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.textureBuffer);
         gl.vertexAttribPointer(this.shader.tAttrib,this.mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
@@ -75,27 +75,27 @@ class base_mesh {
     }
 
     LoadMipMapParameter(){
-        const textureLocation_1 = gl.getUniformLocation(this.shader, 'u_texture_1');
+        const textureLocation_1 = gl.getUniformLocation(this.shader, 'uSampler0');
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T1);
         gl.uniform1i(textureLocation_1, 1);
-        const textureLocation_2 = gl.getUniformLocation(this.shader, 'u_texture_2');
+        const textureLocation_2 = gl.getUniformLocation(this.shader, 'uSampler1');
         gl.activeTexture(gl.TEXTURE2);
         gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T2);
         gl.uniform1i(textureLocation_2, 2);
-        const textureLocation_3 = gl.getUniformLocation(this.shader, 'u_texture_3');
+        const textureLocation_3 = gl.getUniformLocation(this.shader, 'uSampler2');
         gl.activeTexture(gl.TEXTURE3);
         gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T3);
         gl.uniform1i(textureLocation_3, 3);
-        const textureLocation_4 = gl.getUniformLocation(this.shader, 'u_texture_grayscale_1');
+        const textureLocation_4 = gl.getUniformLocation(this.shader, 'uSampler_grayscale_0');
         gl.activeTexture(gl.TEXTURE4);
         gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T1grayscale);
         gl.uniform1i(textureLocation_4, 4);
-        const textureLocation_5 = gl.getUniformLocation(this.shader, 'u_texture_grayscale_2');
+        const textureLocation_5 = gl.getUniformLocation(this.shader, 'uSampler_grayscale_1');
         gl.activeTexture(gl.TEXTURE5);
         gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T2grayscale);
         gl.uniform1i(textureLocation_5, 5);
-        const textureLocation_6 = gl.getUniformLocation(this.shader, 'u_texture_grayscale_3');
+        const textureLocation_6 = gl.getUniformLocation(this.shader, 'uSampler_grayscale_2');
         gl.activeTexture(gl.TEXTURE6);
         gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T3grayscale);
         gl.uniform1i(textureLocation_6, 6);
