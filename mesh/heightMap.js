@@ -292,6 +292,22 @@ class heightMap extends base_mesh {
         this.ready = true;
     }
 
+    loadTextureInShader(){
+        if (this.useTexture && this.texturesReady[0] && this.texturesReady[1] && this.texturesReady[2]) {
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, this.textures[0]);
+            gl.uniform1i(this.shader.sampler0Uniform, 0);
+
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, this.textures[1]);
+            gl.uniform1i(this.shader.sampler1Uniform, 1);
+
+            gl.activeTexture(gl.TEXTURE2);
+            gl.bindTexture(gl.TEXTURE_2D, this.textures[2]);
+            gl.uniform1i(this.shader.sampler2Uniform, 2);
+        }
+    }
+
     setShadersParams() {
         super.setShadersParams();
 
@@ -322,14 +338,12 @@ class heightMap extends base_mesh {
 
         this.shader.rScale = gl.getUniformLocation(this.shader, "uScale");
 
-        // Uniform pour les textures
-        this.shader.sampler0Uniform = gl.getUniformLocation(this.shader, "uSampler0");
-        this.shader.sampler1Uniform = gl.getUniformLocation(this.shader, "uSampler1");
-        this.shader.sampler2Uniform = gl.getUniformLocation(this.shader, "uSampler2");
-
         switch (this.shader) {
             case "mipmapheight":
                 super.LoadMipMapParameter();
+                break;
+            case "texture":
+                this.loadTextureInShader();
                 break;
         }
     }
@@ -349,19 +363,6 @@ class heightMap extends base_mesh {
             this.setMatrixUniforms();
 
             // Active les textures si disponibles
-            if (this.useTexture && this.texturesReady[0] && this.texturesReady[1] && this.texturesReady[2]) {
-                gl.activeTexture(gl.TEXTURE0);
-                gl.bindTexture(gl.TEXTURE_2D, this.textures[0]);
-                gl.uniform1i(this.shader.sampler0Uniform, 0);
-
-                gl.activeTexture(gl.TEXTURE1);
-                gl.bindTexture(gl.TEXTURE_2D, this.textures[1]);
-                gl.uniform1i(this.shader.sampler1Uniform, 1);
-
-                gl.activeTexture(gl.TEXTURE2);
-                gl.bindTexture(gl.TEXTURE_2D, this.textures[2]);
-                gl.uniform1i(this.shader.sampler2Uniform, 2);
-            }
 
             var check = document.getElementById("wireframeCheckbox").checked;
             console.log(check);

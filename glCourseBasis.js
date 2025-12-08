@@ -176,7 +176,7 @@ function webGLStart() {
 		IMG_PATH+'grass.png',   // 20-80% : herbe
 		IMG_PATH+'snow.png'     // 80-100% : neige
 	],
-		'mipmapheight');
+		'gradient');
 
 	OBJ1 = new obj_mesh(OBJ_PATH+'bunny.obj', 'obj');
 
