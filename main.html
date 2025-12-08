@@ -92,26 +92,25 @@
                         <input type="radio" id="height_mipmap_radio" value="mipmapheight" name="height_type" oninput="changeHeightShader(this.value)"/>
                         <label for="height_mipmap_radio">MipMap</label>
                     </fieldset>
+                    <div id="height_mipmap_option_files" style="display:none">
+                        <p>Texture 1</p>
+                        <input type="file" id="heightMipMapTexture1Picker" accept=".png" onChange="heightMipMapTexture1FilePicker(this.files[0]);"/>
+                        <input type="file" id="heightMipMap1Picker" accept=".png" onChange="heightFilePicker(this.files[0]);"/>
+                        <p>Texture 2</p>
+                        <input type="file" id="heightMipMapTexture2Picker" accept=".png" onChange="heightFilePicker(this.files[0]);"/>
+                        <input type="file" id="heightMipMap2Picker" accept=".png" onChange="heightFilePicker(this.files[0]);"/>
+                        <p>Texture 3</p>
+                        <input type="file" id="heightMipMapTexture3Picker" accept=".png" onChange="heightFilePicker(this.files[0]);"/>
+                        <input type="file" id="heightMipMap3Picker" accept=".png" onChange="heightFilePicker(this.files[0]);"/>
+                    </div>
+                    <div id="mipmap_option" style="display:none">
+                        <p class="option_title">Option de la mipmap</p>
+                        <input type="range" id="tresh_1to2_scale" step="0.01" min="0.0" max="1.0" oninput="changeTreshold_1to2(this.value);"/>
+                        <label for="tresh_1to2_scale">Treshold 1</label>
+                        <input type="range" id="tresh_2to3_scale" step="0.01" min="0.0" max="1.0" oninput="changeTreshold_2to3(this.value);"/>
+                        <label for="tresh_2to3_scale">Treshold 2</label>
+                    </div>
                 </div>
-
-                <div id="height_mipmap_option_files" style="display:none">
-                    <p>Texture 1</p>
-                    <input type="file" id="heightMipMapTexture1Picker" accept=".png" onChange="heightMipMapTexture1FilePicker(this.files[0]);"/>
-                    <input type="file" id="heightMipMap1Picker" accept=".png" onChange="heightFilePicker(this.files[0]);"/>
-                    <p>Texture 2</p>
-                    <input type="file" id="heightMipMapTexture2Picker" accept=".png" onChange="heightFilePicker(this.files[0]);"/>
-                    <input type="file" id="heightMipMap2Picker" accept=".png" onChange="heightFilePicker(this.files[0]);"/>
-                    <p>Texture 3</p>
-                    <input type="file" id="heightMipMapTexture3Picker" accept=".png" onChange="heightFilePicker(this.files[0]);"/>
-                    <input type="file" id="heightMipMap3Picker" accept=".png" onChange="heightFilePicker(this.files[0]);"/>
-                </div>
-            </div>
-            <div id="mipmap_option" style="display:none">
-                <p class="option_title">Option de la mipmap</p>
-                <input type="range" id="tresh_1to2_scale" step="0.01" min="0.0" max="1.0" oninput="changeTreshold_1to2(this.value);"/>
-                <label for="tresh_1to2_scale">Treshold 1</label>
-                <input type="range" id="tresh_2to3_scale" step="0.01" min="0.0" max="1.0" oninput="changeTreshold_2to3(this.value);"/>
-                <label for="tresh_2to3_scale">Treshold 2</label>
             </div>
         </div>
     </div>

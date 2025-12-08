@@ -86,7 +86,6 @@ function changePlaneType(value){
         drawHeightMap = false;
         PLANE.shaderName = SHADER_PATH+"mipmap";
         document.getElementById("bump_option").style.display = "none";
-        document.getElementById("mipmap_option").style.display = "block";
         document.getElementById("height_option").style.display = "none";
         PLANE.InitMipMapTexture(
             "Ground097_1K-PNG_Color.png", "Bricks097_1K-PNG_Color.png", "PavingStones150_1K-PNG_Color.png",
@@ -105,8 +104,10 @@ function changeHeightShader(value){
     loadShaders(HEIGHT);
     if (value === "mipmapheight"){
         document.getElementById("height_mipmap_option_files").style.display = "block";
+        document.getElementById("mipmap_option").style.display = "block";
     } else {
         document.getElementById("height_mipmap_option_files").style.display = "none";
+        document.getElementById("mipmap_option").style.display = "none";
     }
 }
 
