@@ -98,13 +98,6 @@ class heightMap extends base_mesh {
         const imgData = ctx.getImageData(0, 0, this.longueur, this.largeur);
         const pixels = imgData.data;
 
-        /*for (let y = this.largeur - 1; y >= 0; y--) {
-            for (let x = 0; x < this.longueur; x++) {
-                const i = (y * this.longueur + x) * 4;
-                const gray = pixels[i];
-                this.heights.push(gray/255.0);
-            }
-        }*/
         for (let y = 0; y < this.largeur; y++) {
             for (let x = 0; x < this.longueur; x++) {
                 const i = (y * this.longueur + x) * 4;
