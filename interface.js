@@ -19,10 +19,29 @@ function heightFilePicker(file){
     ]);
 }
 
-function heightMipMapTexture1FilePicker(file){
+function heightMipMapTextureFilePicker(file, choice){
     const url = URL.createObjectURL(file);
     console.log(url);
-    HEIGHT.mipmap_T1 = createSample2D(url);
+    switch (choice) {
+        case 1:
+            HEIGHT.mipmap_T1 = createSample2D(url);
+            break;
+        case 2:
+            HEIGHT.mipmap_T1grayscale = createSample2D(url);
+            break;
+        case 3:
+            HEIGHT.mipmap_T2 = createSample2D(url);
+            break;
+        case 4:
+            HEIGHT.mipmap_T2grayscale = createSample2D(url);
+            break;
+        case 5:
+            HEIGHT.mipmap_T3 = createSample2D(url);
+            break;
+        case 6:
+            HEIGHT.mipmap_T3grayscale = createSample2D(url);
+            break;
+    }
     loadShaders(HEIGHT)
 }
 
