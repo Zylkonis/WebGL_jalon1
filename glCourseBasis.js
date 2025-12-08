@@ -17,8 +17,8 @@ var li = 1.0; // intensité lumineuse
 
 var treshold_1to2 = 0.25;
 var treshold_2to3 = 0.60;
-var alpha_1to2 = 0.05;
-var alpha_2to3 = 0.15;
+var alpha_1to2 = 0.1;
+var alpha_2to3 = 0.1;
 
 var OBJ1 = null;
 var PLANE = null;

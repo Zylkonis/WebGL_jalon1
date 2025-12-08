@@ -30,7 +30,7 @@ class base_mesh {
         this.mipmap_T1grayscale = createSample2D(IMG_PATH+T1grayscale_path);
         this.mipmap_T2grayscale = createSample2D(IMG_PATH+T2grayscale_path);
         this.mipmap_T3grayscale = createSample2D(IMG_PATH+T3grayscale_path);
-        this.mipmap_noise = createSample2D(IMG_PATH+noise_path);
+        this.mipmap_noise = createSample2D(noise_path);
     }
 
     setShadersParams() {
