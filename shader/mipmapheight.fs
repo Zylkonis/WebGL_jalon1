@@ -37,15 +37,17 @@ vec4 minMaxBlend(vec4 color1, float height1, vec4 color2, float height2, float b
 }
 
 void main(void) {
+    float texture_scaling = 8.;
+
     // Sample grayscale heightmaps
-    float height_1 = texture2D(uSampler_grayscale_0, vTextureCoord).r;
-    float height_2 = texture2D(uSampler_grayscale_1, vTextureCoord).r;
-    float height_3 = texture2D(uSampler_grayscale_2, vTextureCoord).r;
+    float height_1 = texture2D(uSampler_grayscale_0, vTextureCoord * texture_scaling).r;
+    float height_2 = texture2D(uSampler_grayscale_1, vTextureCoord * texture_scaling).r;
+    float height_3 = texture2D(uSampler_grayscale_2, vTextureCoord * texture_scaling).r;
 
     // Sample color textures
-    vec4 color_1 = texture2D(uSampler0, vTextureCoord);
-    vec4 color_2 = texture2D(uSampler1, vTextureCoord);
-    vec4 color_3 = texture2D(uSampler2, vTextureCoord);
+    vec4 color_1 = texture2D(uSampler0, vTextureCoord * texture_scaling);
+    vec4 color_2 = texture2D(uSampler1, vTextureCoord * texture_scaling);
+    vec4 color_3 = texture2D(uSampler2, vTextureCoord * texture_scaling);
 
     // Noise value (this is your control parameter)
     float noiseBrightness = texture2D(u_noise, vTextureCoord).r;

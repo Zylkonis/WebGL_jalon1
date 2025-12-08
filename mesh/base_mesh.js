@@ -80,31 +80,52 @@ class base_mesh {
         const textureLocation_1 = gl.getUniformLocation(this.shader, 'uSampler0');
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T1);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
         gl.uniform1i(textureLocation_1, 1);
+
         const textureLocation_2 = gl.getUniformLocation(this.shader, 'uSampler1');
         gl.activeTexture(gl.TEXTURE2);
         gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T2);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
         gl.uniform1i(textureLocation_2, 2);
+
         const textureLocation_3 = gl.getUniformLocation(this.shader, 'uSampler2');
         gl.activeTexture(gl.TEXTURE3);
         gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T3);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
         gl.uniform1i(textureLocation_3, 3);
+
         const textureLocation_4 = gl.getUniformLocation(this.shader, 'uSampler_grayscale_0');
         gl.activeTexture(gl.TEXTURE4);
         gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T1grayscale);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
         gl.uniform1i(textureLocation_4, 4);
+
         const textureLocation_5 = gl.getUniformLocation(this.shader, 'uSampler_grayscale_1');
         gl.activeTexture(gl.TEXTURE5);
         gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T2grayscale);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
         gl.uniform1i(textureLocation_5, 5);
+
         const textureLocation_6 = gl.getUniformLocation(this.shader, 'uSampler_grayscale_2');
         gl.activeTexture(gl.TEXTURE6);
         gl.bindTexture(gl.TEXTURE_2D, this.mipmap_T3grayscale);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
         gl.uniform1i(textureLocation_6, 6);
+
         const textureLocation_7 = gl.getUniformLocation(this.shader, 'u_noise');
         gl.activeTexture(gl.TEXTURE7);
         gl.bindTexture(gl.TEXTURE_2D, this.mipmap_noise);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
         gl.uniform1i(textureLocation_7, 7);
+        
         this.shader.treshold_1to2 = gl.getUniformLocation(this.shader, "treshold_1to2");
         this.shader.treshold_2to3 = gl.getUniformLocation(this.shader, "treshold_2to3");
         this.shader.alpha_1to2 = gl.getUniformLocation(this.shader, "alpha_1to2");
