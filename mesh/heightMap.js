@@ -338,11 +338,11 @@ class heightMap extends base_mesh {
 
         this.shader.rScale = gl.getUniformLocation(this.shader, "uScale");
 
-        switch (this.shader) {
-            case "mipmapheight":
+        switch (this.shaderName) {
+            case SHADER_PATH+"mipmapheight":
                 super.LoadMipMapParameter();
                 break;
-            case "texture":
+            case SHADER_PATH+"texture":
                 this.loadTextureInShader();
                 break;
         }
@@ -361,8 +361,6 @@ class heightMap extends base_mesh {
         if (this.shader && this.loaded == 4 && this.mesh != null) {
             this.setShadersParams();
             this.setMatrixUniforms();
-
-            // Active les textures si disponibles
 
             var check = document.getElementById("wireframeCheckbox").checked;
             console.log(check);
