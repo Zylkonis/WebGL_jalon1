@@ -19,6 +19,13 @@ function heightFilePicker(file){
     ]);
 }
 
+function heightMipMapTexture1FilePicker(file){
+    const url = URL.createObjectURL(file);
+    console.log(url);
+    HEIGHT.mipmap_T1 = createSample2D(url);
+    loadShaders(HEIGHT)
+}
+
 function objChangeSelect(value){
     OBJ1.objName = OBJ_PATH+value;
     OBJ1.Init();
@@ -96,6 +103,11 @@ function planeChangeColor(value){
 function changeHeightShader(value){
     HEIGHT.shaderName = SHADER_PATH + value;
     loadShaders(HEIGHT);
+    if (value === "mipmapheight"){
+        document.getElementById("height_mipmap_option_files").style.display = "block";
+    } else {
+        document.getElementById("height_mipmap_option_files").style.display = "none";
+    }
 }
 
 function changeTreshold_1to2(value) {

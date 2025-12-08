@@ -42,6 +42,8 @@ html, body {
     flex-direction: column;
     gap: 10px;
     max-height: 100%; /* ne dépasse pas le container */
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 /* Style commun pour les conteneurs des range + label */
