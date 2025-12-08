@@ -18,12 +18,10 @@ class heightMap extends base_mesh {
         this.useTexture = texturePaths !== null;
         this.textures = [null, null, null];
 
-        if (shaderToUse ===  "mipmapheight") {
-            this.InitMipMapTexture(
-                "Ground097_1K-PNG_Color.png", "Bricks097_1K-PNG_Color.png", "PavingStones150_1K-PNG_Color.png",
-                "Ground097_1K-PNG_Displacement.png", "Bricks097_1K-PNG_Displacement.png", "PavingStones150_1K-PNG_Displacement.png",
-                "texture3.png");
-        }
+        this.InitMipMapTexture(
+            "Ground097_1K-PNG_Color.png", "Bricks097_1K-PNG_Color.png", "PavingStones150_1K-PNG_Color.png",
+            "Ground097_1K-PNG_Displacement.png", "Bricks097_1K-PNG_Displacement.png", "PavingStones150_1K-PNG_Displacement.png",
+            "texture3.png");
 
         this.img = new Image();
         this.img.src = mapPath;
