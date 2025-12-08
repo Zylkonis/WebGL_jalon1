@@ -10,8 +10,10 @@ class base_mesh {
 
         this.mipmap_T1 = null;
         this.mipmap_T2 = null;
+        this.mipmap_T3 = null;
         this.mipmap_T1grayscale = null;
         this.mipmap_T2grayscale = null;
+        this.mipmap_T3grayscale = null;
         this.mipmap_noise = null;
     }
 

@@ -18,7 +18,7 @@ class heightMap extends base_mesh {
         this.useTexture = texturePaths !== null;
         this.textures = [null, null, null];
 
-        if (this.shaderName === SHADER_PATH + "mipmapheight") {
+        if (shaderToUse ===  "mipmapheight") {
             this.InitMipMapTexture(
                 "Ground097_1K-PNG_Color.png", "Bricks097_1K-PNG_Color.png", "PavingStones150_1K-PNG_Color.png",
                 "Ground097_1K-PNG_Displacement.png", "Bricks097_1K-PNG_Displacement.png", "PavingStones150_1K-PNG_Displacement.png",
@@ -292,19 +292,22 @@ class heightMap extends base_mesh {
         this.ready = true;
     }
 
-    loadTextureInShader(){
+    loadTextureShaderParameter(){
         if (this.useTexture && this.texturesReady[0] && this.texturesReady[1] && this.texturesReady[2]) {
-            gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this.textures[0]);
-            gl.uniform1i(this.shader.sampler0Uniform, 0);
-
+            let textureLocation_1 = gl.getUniformLocation(this.shader, 'uSampler0');
+            let textureLocation_2 = gl.getUniformLocation(this.shader, 'uSampler1');
+            let textureLocation_3 = gl.getUniformLocation(this.shader, 'uSampler2');
             gl.activeTexture(gl.TEXTURE1);
-            gl.bindTexture(gl.TEXTURE_2D, this.textures[1]);
-            gl.uniform1i(this.shader.sampler1Uniform, 1);
+            gl.bindTexture(gl.TEXTURE_2D, this.textures[0]);
+            gl.uniform1i(textureLocation_1, 1);
 
             gl.activeTexture(gl.TEXTURE2);
+            gl.bindTexture(gl.TEXTURE_2D, this.textures[1]);
+            gl.uniform1i(textureLocation_2, 2);
+
+            gl.activeTexture(gl.TEXTURE3);
             gl.bindTexture(gl.TEXTURE_2D, this.textures[2]);
-            gl.uniform1i(this.shader.sampler2Uniform, 2);
+            gl.uniform1i(textureLocation_3, 3);
         }
     }
 
@@ -340,10 +343,11 @@ class heightMap extends base_mesh {
 
         switch (this.shaderName) {
             case SHADER_PATH+"mipmapheight":
+                super.LoadTextureInShader();
                 super.LoadMipMapParameter();
                 break;
             case SHADER_PATH+"texture":
-                this.loadTextureInShader();
+                this.loadTextureShaderParameter();
                 break;
         }
     }
