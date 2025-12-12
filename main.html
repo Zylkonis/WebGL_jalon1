@@ -50,6 +50,8 @@
             <div>
                 <input type="checkbox" id="wireframeCheckbox" name="scales"/>
                 <label for="wireframeCheckbox">Wireframe</label>
+                <input type="checkbox" id="objDrawnCheckbox" name="scales"/>
+                <label for="wireframeCheckbox">Draw obj</label>
             </div>
             <HR WIDTH="100%">
             <div>
@@ -62,9 +64,6 @@
 
                     <input type="radio" id="height_radio" value="height" name="plane_type" oninput="changePlaneType(this.value)"/>
                     <label for="height_radio">Height</label>
-
-                    <input type="radio" id="mipmap_radio" value="mipmap" name="plane_type" oninput="changePlaneType(this.value)"/>
-                    <label for="mipmap_radio">MipMap</label>
                 </fieldset>
             </div>
             <div>
@@ -81,6 +80,8 @@
                     <input type="range" id="heightScale" min="0.0" max="200.0" value="scale" oninput="heightChange(this.value);"/>
                     <label for="heightScale">Échelle de hauteur</label>
                 </div>
+                <input type="checkbox" id="oceanDrawnCheckbox" name="scales" oninput="initOcean();"/>
+                <label for="oceanDrawnCheckbox">Draw ocean</label>
                 <div>
                     <fieldset>
                         <input type="radio" id="height_gradient_radio" value="gradient" name="height_type" checked oninput="changeHeightShader(this.value)"/>
@@ -110,8 +111,12 @@
                 <p class="option_title">Option de la mipmap</p>
                 <input type="range" id="tresh_1to2_scale" step="0.01" min="0.0" max="1.0" oninput="changeTreshold_1to2(this.value);"/>
                 <label for="tresh_1to2_scale">Treshold 1</label>
+                <input type="range" id="delta_1to2_scale" step="0.01" min="0.0" max="1.0" oninput="changeDelta_1to2(this.value);"/>
+                <label for="delta_1to2_scale">Delta 1</label>
                 <input type="range" id="tresh_2to3_scale" step="0.01" min="0.0" max="1.0" oninput="changeTreshold_2to3(this.value);"/>
                 <label for="tresh_2to3_scale">Treshold 2</label>
+                <input type="range" id="delta_2to3_scale" step="0.01" min="0.0" max="1.0" oninput="changeDelta_2to3(this.value);"/>
+                <label for="delta_2to3_scale">Delta 2</label>
             </div>
         </div>
     </div>

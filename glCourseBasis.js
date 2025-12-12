@@ -19,10 +19,12 @@ var treshold_1to2 = 0.25;
 var treshold_2to3 = 0.60;
 var alpha_1to2 = 0.1;
 var alpha_2to3 = 0.1;
+var oceanHeightSoftener = 40;
 
 var OBJ1 = null;
 var PLANE = null;
 var HEIGHT = null;
+var OCEAN = null;
 var OBJ_PATH = 'obj/';
 var IMG_PATH = 'img/';
 var SHADER_PATH = 'shader/';
@@ -170,7 +172,7 @@ function webGLStart() {
 
 	distCENTER = vec3.create([0,-0.2,-3]);
 
-	PLANE = new plane();
+	PLANE = new plane(1);
     HEIGHT = new heightMap(IMG_PATH+'texture2.png', [
 		IMG_PATH+'water.png',    // 0-20% : eau
 		IMG_PATH+'grass.png',   // 20-80% : herbe
@@ -178,22 +180,33 @@ function webGLStart() {
 	],
 		'gradient');
 
+	OCEAN = new plane(3.5);
+
 	OBJ1 = new obj_mesh(OBJ_PATH+'bunny.obj', 'obj');
 
     adaptCanvasSize();
 	
 	tick();
+
+	document.getElementById("oceanDrawnCheckbox").checked = false;
+	document.getElementById('tresh_1to2_scale').value = treshold_1to2;
+	document.getElementById('tresh_2to3_scale').value = treshold_2to3;
+	document.getElementById('delta_1to2_scale').value = alpha_1to2;
+	document.getElementById('delta_1to2_scale').value = alpha_2to3;
 }
 
 // =====================================================
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
-	//OBJ1.draw();
     if(drawPlane)
         PLANE.draw();
     if(drawHeightMap)
         HEIGHT.draw();
+	if(document.getElementById("oceanDrawnCheckbox").checked)
+		OCEAN.draw();
+	if(document.getElementById("objDrawnCheckbox").checked)
+		OBJ1.draw();
 }
 
 function hexToNormalizedRGB(hex) {

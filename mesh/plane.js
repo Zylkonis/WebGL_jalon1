@@ -1,11 +1,13 @@
 class plane extends base_mesh{
 
     // --------------------------------------------
-    constructor() {
+    constructor(size) {
         super('plane');
 
         this.imagePath = IMG_PATH+'Surface10.png';
         this.texture = createSample2D(this.imagePath);
+        this.size = size;
+        this.height = 0.0;
         this.Init();
     }
 
@@ -15,13 +17,12 @@ class plane extends base_mesh{
 
         this.mesh = OBJ.Mesh(new XMLHttpRequest().responseText);
 
-        var size=1.0;
         this.mesh = {};
         this.mesh.vertices = [
-            -size, -size, 0.1,
-            size, -size, 0.1,
-            size, size, 0.1,
-            -size, size, 0.1
+            -this.size, -this.size, 0.1,
+            this.size, -this.size, 0.1,
+            this.size, this.size, 0.1,
+            -this.size, this.size, 0.1
         ];
 
         this.mesh.textures = [
@@ -89,7 +90,16 @@ class plane extends base_mesh{
     draw() {
         if(this.shader && this.loaded==4) {
             this.setShadersParams();
-            this.setMatrixUniforms()
+
+            mat4.identity(mvMatrix);
+
+            mat4.translate(mvMatrix, [0., this.height, 0.]);
+            mat4.translate(mvMatrix, distCENTER);
+
+            mat4.multiply(mvMatrix, rotMatrix);
+            gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
+            gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
+            gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 
             gl.drawArrays(gl.TRIANGLE_FAN, 0, this.mesh.vertexBuffer.numItems);
             gl.drawArrays(gl.LINE_LOOP, 0, this.mesh.vertexBuffer.numItems);

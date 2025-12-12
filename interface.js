@@ -65,6 +65,7 @@ function shaderChangeLi(value){
 
 function heightChange(value){
     scale = value;
+    OCEAN.height = treshold_1to2 * (scale / oceanHeightSoftener);
 }
 
 function shaderChangeColor(value){
@@ -74,43 +75,31 @@ function shaderChangeColor(value){
 function changePlaneType(value){
     if(value === "plane"){
         drawPlane = true;
-        PLANE.useBumpMap = false;
-        drawHeightMap = false;
-        PLANE.shaderName = SHADER_PATH+value;
-        document.getElementById("bump_option").style.display = "none";
-        document.getElementById("mipmap_option").style.display = "none";
-        document.getElementById("height_option").style.display = "none";
+        PLANE.shaderName = SHADER_PATH+"plane";
         PLANE.Init();
     }
+
     if(value === "bump"){
         drawPlane = true;
-        drawHeightMap = false;
         PLANE.useBumpMap = true;
         PLANE.shaderName = SHADER_PATH+'blingfong';
         document.getElementById("bump_option").style.display = "block";
-        document.getElementById("mipmap_option").style.display = "none";
-        document.getElementById("height_option").style.display = "none";
         PLANE.Init();
     }
+    else{
+        PLANE.useBumpMap = false;
+        document.getElementById("bump_option").style.display = "none";
+    }
+
     if(value === "height"){
         drawPlane = false;
         drawHeightMap = true;
-        document.getElementById("bump_option").style.display = "none";
-        document.getElementById("mipmap_option").style.display = "none";
         document.getElementById("height_option").style.display = "block";
     }
-    if(value === "mipmap"){
-        drawPlane = true;
-        PLANE.useBumpMap = false;
+    else{
         drawHeightMap = false;
-        PLANE.shaderName = SHADER_PATH+"mipmap";
-        document.getElementById("bump_option").style.display = "none";
+        document.getElementById("oceanDrawnCheckbox").checked = false;
         document.getElementById("height_option").style.display = "none";
-        PLANE.InitMipMapTexture(
-            "Ground097_1K-PNG_Color.png", "Bricks097_1K-PNG_Color.png", "PavingStones150_1K-PNG_Color.png",
-            "Ground097_1K-PNG_Displacement.png", "Bricks097_1K-PNG_Displacement.png", "PavingStones150_1K-PNG_Displacement.png",
-            "texture3.png");
-        PLANE.Init();
     }
 }
 
@@ -148,6 +137,7 @@ function changeTreshold_1to2(value) {
         slider2.value = treshold_1to2 + alpha_1to2;
         treshold_2to3 = treshold_1to2 + alpha_1to2;
     }
+    OCEAN.height = treshold_1to2 * (scale / oceanHeightSoftener);
 }
 
 function changeTreshold_2to3(value) {
@@ -165,3 +155,56 @@ function changeTreshold_2to3(value) {
         treshold_2to3 = newValue;
     }
 }
+
+function changeDelta_1to2(value) {
+    alpha_1to2 = parseFloat(value);
+
+    const slider1 = document.getElementById('tresh_1to2_scale');
+    const slider2 = document.getElementById('tresh_2to3_scale');
+    const minSpace = alpha_1to2;
+
+    if(treshold_2to3 - treshold_1to2 < minSpace) {
+        const newTreshold2 = treshold_1to2 + minSpace;
+
+        if(newTreshold2 <= 1.0) {
+            treshold_2to3 = newTreshold2;
+            slider2.value = treshold_2to3;
+        } else {
+            treshold_2to3 = 1.0;
+            treshold_1to2 = 1.0 - minSpace;
+            slider1.value = treshold_1to2;
+            slider2.value = treshold_2to3;
+        }
+    }
+
+    if(treshold_1to2 > 1.0 - alpha_1to2) {
+        treshold_1to2 = 1.0 - alpha_1to2;
+        slider1.value = treshold_1to2;
+    }
+}
+
+function changeDelta_2to3(value) {
+    alpha_2to3 = parseFloat(value);
+
+    const slider2 = document.getElementById('tresh_2to3_scale');
+
+    if(treshold_2to3 > 1.0 - alpha_2to3) {
+        treshold_2to3 = 1.0 - alpha_2to3;
+        slider2.value = treshold_2to3;
+
+        const slider1 = document.getElementById('tresh_1to2_scale');
+        if(treshold_1to2 > treshold_2to3 - alpha_1to2) {
+            treshold_1to2 = treshold_2to3 - alpha_1to2;
+            slider1.value = treshold_1to2;
+        }
+    }
+}
+
+function initOcean(){
+    OCEAN.objColor = hexToNormalizedRGB("#0000FF");
+    OCEAN.useBumpMap = true;
+    OCEAN.shaderName = SHADER_PATH+'blingfong';
+    OCEAN.texture = createSample2D(IMG_PATH+"water.png");
+    OCEAN.Init();
+}
+
