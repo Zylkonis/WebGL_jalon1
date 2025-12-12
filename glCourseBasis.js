@@ -19,7 +19,7 @@ var treshold_1to2 = 0.25;
 var treshold_2to3 = 0.60;
 var alpha_1to2 = 0.1;
 var alpha_2to3 = 0.1;
-var oceanHeightSoftener = 40;
+var oceanHeightSoftener = 50;
 
 var OBJ1 = null;
 var PLANE = null;
@@ -180,7 +180,7 @@ function webGLStart() {
 	],
 		'gradient');
 
-	OCEAN = new plane(3.5);
+	OCEAN = new plane(3.8);
 
 	OBJ1 = new obj_mesh(OBJ_PATH+'bunny.obj', 'obj');
 

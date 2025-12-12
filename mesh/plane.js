@@ -90,13 +90,12 @@ class plane extends base_mesh{
     draw() {
         if(this.shader && this.loaded==4) {
             this.setShadersParams();
-
             mat4.identity(mvMatrix);
-
-            mat4.translate(mvMatrix, [0., this.height, 0.]);
             mat4.translate(mvMatrix, distCENTER);
-
             mat4.multiply(mvMatrix, rotMatrix);
+
+            mat4.translate(mvMatrix, [0., 0., this.height]);
+
             gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
             gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
             gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
