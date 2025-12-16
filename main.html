@@ -89,25 +89,25 @@
                         <input type="radio" id="height_texture_radio" value="texture" name="height_type" oninput="changeHeightShader(this.value)"/>
                         <label for="height_texture_radio">Texture</label>
 
-                        <input type="radio" id="height_mipmap_radio" value="mipmapheight" name="height_type" oninput="changeHeightShader(this.value)"/>
-                        <label for="height_mipmap_radio">MipMap</label>
+                        <input type="radio" id="height_mixmax_radio" value="mixmaxheight" name="height_type" oninput="changeHeightShader(this.value)"/>
+                        <label for="height_mixmax_radio">MixMax</label>
                     </fieldset>
                 </div>
 
-                <div id="height_mipmap_option_files" style="display:none">
+                <div id="height_mixmax_option_files" style="display:none">
                     <p>Texture 1</p>
-                    <input type="file" id="heightMipMapTexture1Picker" accept=".png" onChange="heightMipMapTextureFilePicker(this.files[0], 1);"/>
-                    <input type="file" id="heightMipMap1Picker" accept=".png" onChange="heightMipMapTextureFilePicker(this.files[0], 2);"/>
+                    <input type="file" id="heightMixMaxTexture1Picker" accept=".png" onChange="heightMixMaxTextureFilePicker(this.files[0], 1);"/>
+                    <input type="file" id="heightMixMax1Picker" accept=".png" onChange="heightMixMaxTextureFilePicker(this.files[0], 2);"/>
                     <p>Texture 2</p>
-                    <input type="file" id="heightMipMapTexture2Picker" accept=".png" onChange="heightMipMapTextureFilePicker(this.files[0], 3);"/>
-                    <input type="file" id="heightMipMap2Picker" accept=".png" onChange="heightMipMapTextureFilePicker(this.files[0], 4);"/>
+                    <input type="file" id="heightMixMaxTexture2Picker" accept=".png" onChange="heightMixMaxTextureFilePicker(this.files[0], 3);"/>
+                    <input type="file" id="heightMixMax2Picker" accept=".png" onChange="heightMixMaxTextureFilePicker(this.files[0], 4);"/>
                     <p>Texture 3</p>
-                    <input type="file" id="heightMipMapTexture3Picker" accept=".png" onChange="heightMipMapTextureFilePicker(this.files[0], 5);"/>
-                    <input type="file" id="heightMipMap3Picker" accept=".png" onChange="heightMipMapTextureFilePicker(this.files[0], 6);"/>
+                    <input type="file" id="heightMixMaxTexture3Picker" accept=".png" onChange="heightMixMaxTextureFilePicker(this.files[0], 5);"/>
+                    <input type="file" id="heightMixMax3Picker" accept=".png" onChange="heightMixMaxTextureFilePicker(this.files[0], 6);"/>
                 </div>
             </div>
-            <div id="mipmap_option" style="display:none">
-                <p class="option_title">Option de la mipmap</p>
+            <div id="mixmax_option" style="display:none">
+                <p class="option_title">Option de la mixmax</p>
                 <input type="range" id="tresh_1to2_scale" step="0.01" min="0.0" max="1.0" oninput="changeTreshold_1to2(this.value);"/>
                 <label for="tresh_1to2_scale">Treshold 1</label>
                 <input type="range" id="delta_1to2_scale" step="0.01" min="0.0" max="1.0" oninput="changeDelta_1to2(this.value);"/>

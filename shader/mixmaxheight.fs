@@ -1,7 +1,7 @@
 precision mediump float;
 
 varying vec3 vNormal;
-uniform sampler2D u_noise;
+uniform sampler2D u_heightmap;
 varying vec2 vTextureCoord;
 
 uniform sampler2D uSampler0;
@@ -50,26 +50,26 @@ void main(void) {
     vec4 color_3 = texture2D(uSampler2, vTextureCoord * texture_scaling);
 
     // Noise value (this is your control parameter)
-    float noiseBrightness = texture2D(u_noise, vTextureCoord).r;
+    float heightmapBrightness = texture2D(u_heightmap, vTextureCoord).r;
 
     vec4 finalColor;
 
-    if (noiseBrightness < treshold_1to2 - alpha_1to2) { // Si la hauteur est sous la première zone de transition
+    if (heightmapBrightness < treshold_1to2 - alpha_1to2) { // Si la hauteur est sous la première zone de transition
         // Pure texture 1
         finalColor = color_1;
     }
-    else if (noiseBrightness < treshold_1to2 + alpha_1to2) { // Si la hauteur est dans la première zone de transition
+    else if (heightmapBrightness < treshold_1to2 + alpha_1to2) { // Si la hauteur est dans la première zone de transition
         // Transition between texture 1 and 2
-        float blendFactor = (noiseBrightness - (treshold_1to2 - alpha_1to2)) / (2.0 * alpha_1to2);
+        float blendFactor = (heightmapBrightness - (treshold_1to2 - alpha_1to2)) / (2.0 * alpha_1to2);
         finalColor = minMaxBlend(color_2, height_2, color_1, height_1,  blendFactor, alpha_1to2);
     }
-    else if (noiseBrightness < treshold_2to3 - alpha_2to3) { // Si la hauteur est sous la deuxième zone de transition
+    else if (heightmapBrightness < treshold_2to3 - alpha_2to3) { // Si la hauteur est sous la deuxième zone de transition
         // Pure texture 2
         finalColor = color_2;
     }
-    else if (noiseBrightness < treshold_2to3 + alpha_2to3) { // Si la hauteur est dans la deuxième zone de transition
+    else if (heightmapBrightness < treshold_2to3 + alpha_2to3) { // Si la hauteur est dans la deuxième zone de transition
         // Transition between texture 2 and 3
-        float blendFactor = (noiseBrightness - (treshold_2to3 - alpha_2to3)) / (2.0 * alpha_2to3);
+        float blendFactor = (heightmapBrightness - (treshold_2to3 - alpha_2to3)) / (2.0 * alpha_2to3);
         finalColor = minMaxBlend( color_3, height_3, color_2, height_2, blendFactor, alpha_2to3);
     }
     else { // Si la hauteur est au dessus des zones de transition

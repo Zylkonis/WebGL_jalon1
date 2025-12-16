@@ -18,7 +18,7 @@ class heightMap extends base_mesh {
         this.useTexture = texturePaths !== null;
         this.textures = [null, null, null];
 
-        this.InitMipMapTexture(
+        this.InitMixMaxTexture(
             "Ground097_1K-PNG_Color.png", "Bricks097_1K-PNG_Color.png", "PavingStones150_1K-PNG_Color.png",
             "Ground097_1K-PNG_Displacement.png", "Bricks097_1K-PNG_Displacement.png", "PavingStones150_1K-PNG_Displacement.png",
             mapPath);
@@ -340,9 +340,9 @@ class heightMap extends base_mesh {
         this.shader.rScale = gl.getUniformLocation(this.shader, "uScale");
 
         switch (this.shaderName) {
-            case SHADER_PATH+"mipmapheight":
+            case SHADER_PATH+"mixmaxheight":
                 super.LoadTextureInShader();
-                super.LoadMipMapParameter();
+                super.LoadMixMaxParameter();
                 break;
             case SHADER_PATH+"texture":
                 this.loadTextureShaderParameter();

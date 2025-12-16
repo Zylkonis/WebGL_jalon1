@@ -19,27 +19,27 @@ function heightFilePicker(file){
     ]);
 }
 
-function heightMipMapTextureFilePicker(file, choice){
+function heightMixMaxTextureFilePicker(file, choice){
     const url = URL.createObjectURL(file);
     console.log(url);
     switch (choice) {
         case 1:
-            HEIGHT.mipmap_T1 = createSample2D(url);
+            HEIGHT.mixmax_T1 = createSample2D(url);
             break;
         case 2:
-            HEIGHT.mipmap_T1grayscale = createSample2D(url);
+            HEIGHT.mixmax_T1grayscale = createSample2D(url);
             break;
         case 3:
-            HEIGHT.mipmap_T2 = createSample2D(url);
+            HEIGHT.mixmax_T2 = createSample2D(url);
             break;
         case 4:
-            HEIGHT.mipmap_T2grayscale = createSample2D(url);
+            HEIGHT.mixmax_T2grayscale = createSample2D(url);
             break;
         case 5:
-            HEIGHT.mipmap_T3 = createSample2D(url);
+            HEIGHT.mixmax_T3 = createSample2D(url);
             break;
         case 6:
-            HEIGHT.mipmap_T3grayscale = createSample2D(url);
+            HEIGHT.mixmax_T3grayscale = createSample2D(url);
             break;
     }
     loadShaders(HEIGHT)
@@ -110,12 +110,12 @@ function planeChangeColor(value){
 function changeHeightShader(value){
     HEIGHT.shaderName = SHADER_PATH + value;
     loadShaders(HEIGHT);
-    if (value === "mipmapheight"){
-        document.getElementById("height_mipmap_option_files").style.display = "block";
-        document.getElementById("mipmap_option").style.display = "block";
+    if (value === "mixmaxheight"){
+        document.getElementById("height_mixmax_option_files").style.display = "block";
+        document.getElementById("mixmax_option").style.display = "block";
     } else {
-        document.getElementById("height_mipmap_option_files").style.display = "none";
-        document.getElementById("mipmap_option").style.display = "none";
+        document.getElementById("height_mixmax_option_files").style.display = "none";
+        document.getElementById("mixmax_option").style.display = "none";
     }
 }
 
