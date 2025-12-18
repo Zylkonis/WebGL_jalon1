@@ -13,6 +13,12 @@ class cloud extends base_mesh{
     Init(){
         super.Init();
 
+        for (let spheres = 0; spheres < ; spheres + 4){
+            this.clouds[spheres] = this.size / 2 + this.clouds[spheres] * this.size / 2;
+            this.clouds[spheres+1] = this.height / 2 + this.clouds[spheres+1] * this.height / 2;
+            this.clouds[spheres+2] = this.size / 2 + this.clouds[spheres+2] * this.size / 2;
+        }
+
         this.mesh = OBJ.Mesh(new XMLHttpRequest().responseText);
 
         this.mesh = {};
@@ -171,6 +177,9 @@ class cloud extends base_mesh{
         gl.enableVertexAttribArray(this.shader.tAttrib);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.textureBuffer);
         gl.vertexAttribPointer(this.shader.tAttrib,this.mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+        this.shader.cloudsCoordAndRadius = gl.getUniformLocation(this.shader, "cloudsCoordAndRadius");
+        gl.uniform3fv(this.shader.cloudsCoordAndRadius, this.clouds);
     }
 
     // --------------------------------------------
