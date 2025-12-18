@@ -1,11 +1,11 @@
 class cloud extends base_mesh{
 
-    constructor(size, height, particlesCout, cloudSpheres){
+    constructor(size, height, particlesCount, cloudSpheres){
         super('raycasting');
         this.size = size;
         this.height = height;
         this.clouds = cloudSpheres;
-        this.particlesCount = particlesCout;
+        this.particlesCount = particlesCount;
 
         this.Init();
     }
