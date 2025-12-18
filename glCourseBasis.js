@@ -25,6 +25,7 @@ var OBJ1 = null;
 var PLANE = null;
 var HEIGHT = null;
 var OCEAN = null;
+var CLOUD = null;
 var OBJ_PATH = 'obj/';
 var IMG_PATH = 'img/';
 var SHADER_PATH = 'shader/';
@@ -184,6 +185,8 @@ function webGLStart() {
 
 	OBJ1 = new obj_mesh(OBJ_PATH+'bunny.obj', 'obj');
 
+	CLOUD = new cloud(1., 0.5, 10, []);
+
     adaptCanvasSize();
 	
 	tick();
@@ -198,6 +201,7 @@ function webGLStart() {
 // =====================================================
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
+	CLOUD.draw();
 
     if(drawPlane)
         PLANE.draw();
