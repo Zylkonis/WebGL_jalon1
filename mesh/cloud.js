@@ -13,10 +13,13 @@ class cloud extends base_mesh{
     Init(){
         super.Init();
 
-        for (let spheres = 0; spheres < this.clouds.length; spheres + 4){
-            this.clouds[spheres] = this.size / 2 + this.clouds[spheres] * this.size / 2;
-            this.clouds[spheres+1] = this.height / 2 + this.clouds[spheres+1] * this.height / 2;
-            this.clouds[spheres+2] = this.size / 2 + this.clouds[spheres+2] * this.size / 2;
+        for (let spheres = 0; spheres < this.clouds.length ; spheres += 4){
+            if(this.clouds[spheres] != null)
+                this.clouds[spheres] = this.size / 2 + this.clouds[spheres] * this.size / 2;
+            if(this.clouds[spheres+1] != null)
+                this.clouds[spheres+1] = this.height / 2 + this.clouds[spheres+1] * this.height / 2;
+            if(this.clouds[spheres+2] != null)
+                this.clouds[spheres+2] = this.size / 2 + this.clouds[spheres+2] * this.size / 2;
         }
 
         this.mesh = OBJ.Mesh(new XMLHttpRequest().responseText);
@@ -178,8 +181,8 @@ class cloud extends base_mesh{
         gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.textureBuffer);
         gl.vertexAttribPointer(this.shader.tAttrib,this.mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-        this.shader.cloudsCoordAndRadius = gl.getUniformLocation(this.shader, "u_spheres");
-        gl.uniform4fv(this.shader.cloudsCoordAndRadius, this.clouds);
+        //this.shader.cloudsCoordAndRadius = gl.getUniformLocation(this.shader, "u_spheres");
+        //gl.uniform4fv(this.shader.cloudsCoordAndRadius, this.clouds);
     }
 
     // --------------------------------------------

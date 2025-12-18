@@ -28,5 +28,7 @@ void main(void) {
         if (Delta >= 0) {
             gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);    // Blanc au niveau des intersections
         }
+        else
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
     }
 }
