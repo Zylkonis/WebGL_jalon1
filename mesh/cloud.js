@@ -1,7 +1,7 @@
 class cloud extends base_mesh{
 
     constructor(size, height, particlesCout, cloudSpheres){
-        super('wire');
+        super('raycasting');
         this.size = size;
         this.height = height;
         this.clouds = cloudSpheres;
@@ -13,7 +13,7 @@ class cloud extends base_mesh{
     Init(){
         super.Init();
 
-        for (let spheres = 0; spheres < ; spheres + 4){
+        for (let spheres = 0; spheres < this.clouds.length; spheres + 4){
             this.clouds[spheres] = this.size / 2 + this.clouds[spheres] * this.size / 2;
             this.clouds[spheres+1] = this.height / 2 + this.clouds[spheres+1] * this.height / 2;
             this.clouds[spheres+2] = this.size / 2 + this.clouds[spheres+2] * this.size / 2;
@@ -178,8 +178,8 @@ class cloud extends base_mesh{
         gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.textureBuffer);
         gl.vertexAttribPointer(this.shader.tAttrib,this.mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-        this.shader.cloudsCoordAndRadius = gl.getUniformLocation(this.shader, "cloudsCoordAndRadius");
-        gl.uniform3fv(this.shader.cloudsCoordAndRadius, this.clouds);
+        this.shader.cloudsCoordAndRadius = gl.getUniformLocation(this.shader, "u_spheres");
+        gl.uniform4fv(this.shader.cloudsCoordAndRadius, this.clouds);
     }
 
     // --------------------------------------------
