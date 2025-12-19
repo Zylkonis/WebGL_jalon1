@@ -192,7 +192,7 @@ function webGLStart() {
 	document.getElementById('tresh_1to2_scale').value = treshold_1to2;
 	document.getElementById('tresh_2to3_scale').value = treshold_2to3;
 	document.getElementById('delta_1to2_scale').value = alpha_1to2;
-	document.getElementById('delta_1to2_scale').value = alpha_2to3;
+	document.getElementById('delta_2to3_scale').value = alpha_2to3;
 }
 
 // =====================================================
