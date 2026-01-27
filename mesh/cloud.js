@@ -181,8 +181,8 @@ class cloud extends base_mesh{
         gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.textureBuffer);
         gl.vertexAttribPointer(this.shader.tAttrib,this.mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-        //this.shader.cloudsCoordAndRadius = gl.getUniformLocation(this.shader, "u_spheres");
-        //gl.uniform4fv(this.shader.cloudsCoordAndRadius, this.clouds);
+        this.shader.cloudsCoordAndRadius = gl.getUniformLocation(this.shader, "u_spheres");
+        gl.uniform4fv(this.shader.cloudsCoordAndRadius, this.clouds);
     }
 
     // --------------------------------------------
