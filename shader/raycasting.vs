@@ -8,11 +8,15 @@ uniform mat4 uRMatrix;
 
 varying vec3 vNormal;
 varying vec2 vTextureCoord;
-varying vec4 pos3D;
+varying vec3 pos3D;  // Change to view space position
 
 void main(void) {
     vNormal = vec3(uRMatrix * vec4(aVertexNormal, 0.0));
     vTextureCoord = aTextureCoord;
-    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-    pos3D = gl_Position;
+
+    // Get view space position
+    vec4 viewPos = uMVMatrix * vec4(aVertexPosition, 1.0);
+    pos3D = viewPos.xyz;  // Store view space position
+
+    gl_Position = uPMatrix * viewPos;
 }
