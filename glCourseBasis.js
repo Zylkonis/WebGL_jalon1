@@ -174,12 +174,12 @@ function webGLStart() {
 	distCENTER = vec3.create([0,-0.2,-3]);
 
 	PLANE = new plane(1);
-    HEIGHT = new heightMap(IMG_PATH+'texture2.png', [
+    /*HEIGHT = new heightMap(IMG_PATH+'texture2.png', [
 		IMG_PATH+'water.png',    // 0-20% : eau
 		IMG_PATH+'grass.png',   // 20-80% : herbe
 		IMG_PATH+'snow.png'     // 80-100% : neige
 	],
-		'gradient');
+		'gradient');*/
 
 	OCEAN = new plane(3.8);
 
@@ -209,7 +209,7 @@ function drawScene() {
     if(drawPlane)
         PLANE.draw();
     if(drawHeightMap)
-        HEIGHT.draw();
+        //HEIGHT.draw();
 	if(document.getElementById("oceanDrawnCheckbox").checked)
 		OCEAN.draw();
 	if(document.getElementById("objDrawnCheckbox").checked)

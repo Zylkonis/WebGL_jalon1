@@ -7,6 +7,9 @@ class cloud extends base_mesh{
         this.clouds = cloudSpheres;
         this.particlesCount = particlesCount;
 
+        this.cloudColor = [1.0, 1.0, 1.0]; // Couleur des nuages (blanc)
+        this.cloudsMatrix = null;
+
         this.Init();
     }
 
@@ -136,6 +139,18 @@ class cloud extends base_mesh{
             20, 22, 23
         ];
 
+        this.cloudsMatrix = makeMultDirArray(64, 3);
+        for(let x = 0; x < 64; x += 1){
+            for(let y = 0; y < 64; y += 1){
+                for(let z = 0; z < 64; z += 1) {
+                    //if(this.inSphere(x/64 * this.size, x/64 * this.size, x/64 * this.height))
+                    this.cloudsMatrix[x][y][z] = noise3D(noiseVec3(x,y,z));
+                    //else
+                    //    this.cloudsMatrix[x][y][z] = 0;
+                }
+            }
+        }
+
         this.mesh.vertexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.vertexBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.mesh.vertices), gl.STATIC_DRAW);
@@ -163,9 +178,22 @@ class cloud extends base_mesh{
         loadShaders(this);
     }
 
+    inSphere(xCoo, yCoo, zCoo){
+        for (let i = 0; i < this.clouds.length; i += 4) {
+            if(this.clouds[i+3] * this.clouds[i+3] <
+                (xCoo - this.clouds[i]) * (xCoo - this.clouds[i]) +
+                (yCoo - this.clouds[i+1]) * (yCoo - this.clouds[i+1]) +
+                (zCoo - this.clouds[i+2]) * (zCoo - this.clouds[i+2])){
+                return true;
+            }
+        }
+        return false;
+    }
+
     setShadersParams() {
         super.setShadersParams();
 
+        // Attributes
         this.shader.vAttrib = gl.getAttribLocation(this.shader, "aVertexPosition");
         gl.enableVertexAttribArray(this.shader.vAttrib);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.vertexBuffer);
@@ -179,15 +207,27 @@ class cloud extends base_mesh{
         this.shader.tAttrib = gl.getAttribLocation(this.shader, "aTextureCoord");
         gl.enableVertexAttribArray(this.shader.tAttrib);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.textureBuffer);
-        gl.vertexAttribPointer(this.shader.tAttrib,this.mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(this.shader.tAttrib, this.mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+        // Uniforms pour les sphères
         this.shader.cloudsCoordAndRadius = gl.getUniformLocation(this.shader, "u_spheres");
         gl.uniform4fv(this.shader.cloudsCoordAndRadius, this.clouds);
+
+        this.shader.cloudColor = gl.getUniformLocation(this.shader, "u_cloudColor");
+        gl.uniform3fv(this.shader.cloudColor, this.cloudColor);
+
+        this.shader.texture3D = gl.getUniformLocation(this.shader, "texture_3D");
+        gl.uniform3fv(this.shader.texture3D, this.cloudsMatrix);
     }
 
     // --------------------------------------------
     draw() {
         if(this.shader && this.loaded==4) {
+            // Active le blending pour la transparence
+            gl.enable(gl.BLEND);
+            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+            gl.depthMask(false);
+
             this.setShadersParams();
             mat4.identity(mvMatrix);
             mat4.translate(mvMatrix, distCENTER);
@@ -201,6 +241,9 @@ class cloud extends base_mesh{
 
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
             gl.drawElements(gl.TRIANGLES, this.mesh.indexBuffer.numItems, gl.UNSIGNED_INT, 0);
+
+            gl.depthMask(true);
+            gl.disable(gl.BLEND);
         }
     }
 }
