@@ -27,7 +27,7 @@ class cloud extends base_mesh{
                 this.clouds[spheres+2] = this.size / 2 + this.clouds[spheres+2] * this.size / 2;
         }*/
 
-        this.clouds = this.generateRandomSpheres(10, 0.1, 0.5, 0, 1, 1)
+        this.clouds = this.generateRandomSpheres(10, 0.1, 0.5, 1., 1., 1.)
 
         this.mesh = OBJ.Mesh(new XMLHttpRequest().responseText);
 

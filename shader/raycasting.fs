@@ -15,9 +15,9 @@ void main(void) {
     // Convertit la position locale en coordonnées de texture normalisées [0, 1]
     // localPos va de [-size, -size, 0] à [size, size, height]
     vec3 texCoord;
-    texCoord.x = (localPos.x - 1.) * 0.5 ;  // de [-size, size] à [0, 1]
-    texCoord.y = (localPos.y - 1.) * 0.5 ;  // de [-size, size] à [0, 1]
-    texCoord.z = (localPos.z + 1.) * 0.5 ;   // de [0, height] à [0, 1]
+    texCoord.x = (localPos.x + u_boxSize.x * 0.5) / 2. + 0.5; //(localPos.x - 1.) * 0.5 ;  // de [-size, size] à [0, 1]
+    texCoord.y = (localPos.y + u_boxSize.y * 0.5) / 2. + 0.5; //(localPos.y - 1.) * 0.5 ;  // de [-size, size] à [0, 1]
+    texCoord.z = localPos.z / u_boxSize.z / 2. + 0.5; //(localPos.z + 1.) * 0.5 ;   // de [0, height] à [0, 1]
 
     // Échantillonne la texture 3D
     float color = texture(texture_3D, texCoord).r;
