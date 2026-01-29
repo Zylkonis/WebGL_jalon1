@@ -185,10 +185,11 @@ function webGLStart() {
 
 	OBJ1 = new obj_mesh(OBJ_PATH+'bunny.obj', 'obj');
 
-	CLOUD = new cloud(1., 1., 10, [
-		0., 0., 0., 0.1,
-		-0.2, -0.2, -0.2, 0.01
-	]);
+	CLOUD = new cloud(2.0, 2.0, [
+		0.0, 0.0, 0.5, 0.3,      // Sphère au centre, rayon 0.3
+		0.4, 0.4, 0.7, 0.2,      // Sphère en haut à droite, rayon 0.2
+		-0.3, -0.3, 0.3, 0.25    // Sphère en bas à gauche, rayon 0.25
+	], vec3.create([0, 0, 3]));
 
     adaptCanvasSize();
 	
