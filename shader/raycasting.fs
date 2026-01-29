@@ -1,15 +1,27 @@
+#version 300 es
 #define MAX_SPHERES 32
 
 precision mediump float;
 
+uniform float density;
+uniform highp sampler3D texture_3D;
+uniform vec3 u_boxSize;  // Taille de la boîte (width, depth, height)
 uniform vec4 u_spheres[MAX_SPHERES]; // xyz = centre (espace local), w = rayon
 uniform int u_sphereCount;
 uniform mat4 uMVMatrix;  // ← AJOUT IMPORTANT
 uniform mat4 uPMatrix;   // ← AJOUT IMPORTANT
 
-varying vec4 pos3D;
+in vec3 pos3D;      // Position en view space
+in vec3 localPos;   // Position locale NON transformée
+out vec4 fragColor;
 
 void main(void) {
+    // Convertit la position locale en coordonnées de texture normalisées [0, 1]
+    // localPos va de [-size, -size, 0] à [size, size, height]
+    vec3 texCoord;
+    texCoord.x = (localPos.x + u_boxSize.x * 0.5) / 2. + 0.5; //(localPos.x - 1.) * 0.5 ;  // de [-size, size] à [0, 1]
+    texCoord.y = (localPos.y + u_boxSize.y * 0.5) / 2. + 0.5; //(localPos.y - 1.) * 0.5 ;  // de [-size, size] à [0, 1]
+    texCoord.z = localPos.z / u_boxSize.z / 2. + 0.5; //(localPos.z + 1.) * 0.5 ;   // de [0, height] à [0, 1]
     vec4 outColor = vec4(0.0, 0.0, 0.0, 0.0);
 
     float step = 0.02;
@@ -81,7 +93,8 @@ void main(void) {
     if (globalAlphaAcc < 0.01) {
         discard;
     }
-
+    // Échantillonne la texture 3D
+    float color = texture(texture_3D, texCoord).r;
     outColor.a = clamp(globalAlphaAcc, 0.0, 1.0);
-    gl_FragColor = outColor;
+    fragColor = outColor;
 }
