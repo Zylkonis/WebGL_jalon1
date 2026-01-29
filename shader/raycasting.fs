@@ -1,100 +1,115 @@
 #version 300 es
-#define MAX_SPHERES 32
 
-precision mediump float;
+precision highp float;
 
-uniform float density;
 uniform highp sampler3D texture_3D;
 uniform vec3 u_boxSize;  // Taille de la boîte (width, depth, height)
-uniform vec4 u_spheres[MAX_SPHERES]; // xyz = centre (espace local), w = rayon
-uniform int u_sphereCount;
-uniform mat4 uMVMatrix;  // ← AJOUT IMPORTANT
-uniform mat4 uPMatrix;   // ← AJOUT IMPORTANT
+uniform mat4 uMVMatrix;
+uniform mat4 uPMatrix;
 
 in vec3 pos3D;      // Position en view space
 in vec3 localPos;   // Position locale NON transformée
+
 out vec4 fragColor;
 
-void main(void) {
-    // Convertit la position locale en coordonnées de texture normalisées [0, 1]
-    // localPos va de [-size, -size, 0] à [size, size, height]
+// Convertit une position locale en coordonnées de texture [0, 1]
+vec3 localToTexCoord(vec3 local) {
     vec3 texCoord;
-    texCoord.x = (localPos.x + u_boxSize.x * 0.5) / 2. + 0.5; //(localPos.x - 1.) * 0.5 ;  // de [-size, size] à [0, 1]
-    texCoord.y = (localPos.y + u_boxSize.y * 0.5) / 2. + 0.5; //(localPos.y - 1.) * 0.5 ;  // de [-size, size] à [0, 1]
-    texCoord.z = localPos.z / u_boxSize.z / 2. + 0.5; //(localPos.z + 1.) * 0.5 ;   // de [0, height] à [0, 1]
+    texCoord.x = (local.x + u_boxSize.x) / (2.0 * u_boxSize.x);  // [-size, size] → [0, 1]
+    texCoord.y = (local.y + u_boxSize.y) / (2.0 * u_boxSize.y);  // [-size, size] → [0, 1]
+    texCoord.z = local.z / u_boxSize.z;                          // [0, height] → [0, 1]
+    return texCoord;
+}
+
+// Convertit une position en view space vers l'espace local
+vec3 viewToLocal(vec3 viewPos) {
+    // Inverse de la transformation uMVMatrix
+    vec4 localPos4 = inverse(uMVMatrix) * vec4(viewPos, 1.0);
+    return localPos4.xyz;
+}
+
+void main(void) {
     vec4 outColor = vec4(0.0, 0.0, 0.0, 0.0);
 
     float step = 0.02;
     int maxSteps = 128;
 
-    // Calculer la direction du rayon en espace vue
+    // Ray marching en espace vue
     vec3 rayDir = normalize(pos3D.xyz);
     vec3 rayOrigin = vec3(0.0, 0.0, 0.0);
 
     float globalAlphaAcc = 0.0;
 
-    for (int sphereIdx = 0; sphereIdx < MAX_SPHERES; sphereIdx++) {
-        if (sphereIdx >= u_sphereCount) break;
+    // Calculer l'intersection avec la bounding box en espace local
+    vec3 boxMin = vec3(-u_boxSize.x, -u_boxSize.y, 0.0);
+    vec3 boxMax = vec3(u_boxSize.x, u_boxSize.y, u_boxSize.z);
 
-        // Position de la sphère en espace local
-        vec3 sphereCenterLocal = u_spheres[sphereIdx].xyz;
-        float sphereRadius = u_spheres[sphereIdx].w;
+    // Transformer rayOrigin et rayDir en espace local pour l'intersection
+    vec3 rayOriginLocal = viewToLocal(rayOrigin);
+    vec3 rayDirLocal = normalize(viewToLocal(rayOrigin + rayDir) - rayOriginLocal);
 
-        // ⚠️ CLEF : Transformer le centre de la sphère en espace vue
-        vec4 sphereCenterView = uMVMatrix * vec4(sphereCenterLocal, 1.0);
-        vec3 sphereCenter = sphereCenterView.xyz;
+    // Ray-box intersection (algorithme de Smits)
+    vec3 invRayDir = 1.0 / rayDirLocal;
+    vec3 tMin = (boxMin - rayOriginLocal) * invRayDir;
+    vec3 tMax = (boxMax - rayOriginLocal) * invRayDir;
 
-        // Calcul d'intersection rayon-sphère EN ESPACE VUE
-        vec3 oc = rayOrigin - sphereCenter;
-        float a = dot(rayDir, rayDir);
-        float b = 2.0 * dot(oc, rayDir);
-        float c = dot(oc, oc) - (sphereRadius * sphereRadius);
+    vec3 t1 = min(tMin, tMax);
+    vec3 t2 = max(tMin, tMax);
 
-        float delta = (b * b) - (4.0 * a * c);
+    float tNear = max(max(t1.x, t1.y), t1.z);
+    float tFar = min(min(t2.x, t2.y), t2.z);
 
-        if (delta > 0.0) {
-            float sqrtDelta = sqrt(delta);
-            float t1 = (-b - sqrtDelta) / (2.0 * a);
-            float t2 = (-b + sqrtDelta) / (2.0 * a);
+    if (tNear > tFar || tFar < 0.0) {
+        discard; // Pas d'intersection avec la box
+    }
 
-            if (t2 > 0.0) {
-                float tStart = max(t1, 0.0);
-                float tEnd = t2;
+    float tStart = max(tNear, 0.0);
+    float tEnd = tFar;
 
-                for (int stepIdx = 0; stepIdx < 128; stepIdx++) {
-                    if (stepIdx >= maxSteps) break;
-                    if (globalAlphaAcc > 0.999) break;
+    // Ray marching le long du rayon
+    for (int stepIdx = 0; stepIdx < 128; stepIdx++) {
+        if (stepIdx >= maxSteps) break;
+        if (globalAlphaAcc > 0.999) break;
 
-                    float t = tStart + float(stepIdx) * step;
-                    if (t >= tEnd) break;
+        float t = tStart + float(stepIdx) * step;
+        if (t >= tEnd) break;
 
-                    vec3 marchPos = rayOrigin + rayDir * t;
-                    float distToCenter = length(marchPos - sphereCenter);
+        // Position actuelle en espace vue
+        vec3 marchPosView = rayOrigin + rayDir * t;
 
-                    float normalizedDist = distToCenter / sphereRadius;
-                    float density = 0.0;
+        // Convertir en espace local
+        vec3 marchPosLocal = viewToLocal(marchPosView);
 
-                    if (normalizedDist < 1.0) {
-                        density = 1.5 * pow(1.0 - normalizedDist, 2.0);
-                    }
+        // Convertir en coordonnées de texture
+        vec3 texCoord = localToTexCoord(marchPosLocal);
 
-                    if (density > 0.01) {
-                        float absorption = 1.0 - exp(-density * step);
-                        vec3 sampleColor = vec3(1.0, 1.0, 1.0);
+        // Vérifier que nous sommes dans les limites [0, 1]
+        if (texCoord.x < 0.0 || texCoord.x > 1.0 ||
+            texCoord.y < 0.0 || texCoord.y > 1.0 ||
+            texCoord.z < 0.0 || texCoord.z > 1.0) {
+            continue;
+        }
 
-                        outColor.rgb += (1.0 - globalAlphaAcc) * sampleColor * absorption;
-                        globalAlphaAcc += (1.0 - globalAlphaAcc) * absorption;
-                    }
-                }
-            }
+        // Échantillonner la densité depuis la texture 3D
+        float densitySample = texture(texture_3D, texCoord).r;
+
+        if (densitySample > 0.01) {
+            // Absorption de la lumière
+            float absorption = 1.0 - exp(-densitySample * step);
+
+            // Couleur du nuage (blanc)
+            vec3 sampleColor = vec3(1.0, 1.0, 1.0);
+
+            // Accumulation front-to-back
+            outColor.rgb += (1.0 - globalAlphaAcc) * sampleColor * absorption;
+            globalAlphaAcc += (1.0 - globalAlphaAcc) * absorption;
         }
     }
 
     if (globalAlphaAcc < 0.01) {
         discard;
     }
-    // Échantillonne la texture 3D
-    float color = texture(texture_3D, texCoord).r;
+
     outColor.a = clamp(globalAlphaAcc, 0.0, 1.0);
     fragColor = outColor;
 }

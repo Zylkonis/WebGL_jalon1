@@ -49,7 +49,7 @@ function initGL(canvas)
 		gl.viewportHeight = canvas.height;
 		gl.viewport(0, 0, canvas.width, canvas.height);
 
-		gl.clearColor(0.7, 0.7, 0.7, 1.0);
+		gl.clearColor(0., 0., 0., 1.0);
 		gl.enable(gl.DEPTH_TEST);
 		gl.enable(gl.CULL_FACE);
 		gl.cullFace(gl.BACK); 
@@ -185,11 +185,7 @@ function webGLStart() {
 
 	OBJ1 = new obj_mesh(OBJ_PATH+'bunny.obj', 'obj');
 
-	CLOUD = new cloud(2.0, 2.0, [
-		0.0, 0.0, 0.5, 0.3,      // Sphère au centre, rayon 0.3
-		0.4, 0.4, 0.7, 0.2,      // Sphère en haut à droite, rayon 0.2
-		-0.3, -0.3, 0.3, 0.25    // Sphère en bas à gauche, rayon 0.25
-	], vec3.create([0, 0, 3]));
+	CLOUD = new cloud(2, 2);
 
     adaptCanvasSize();
 	
@@ -205,7 +201,6 @@ function webGLStart() {
 // =====================================================
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
-	CLOUD.draw();
 
     if(drawPlane)
         PLANE.draw();
@@ -215,6 +210,7 @@ function drawScene() {
 		OCEAN.draw();
 	if(document.getElementById("objDrawnCheckbox").checked)
 		OBJ1.draw();
+	CLOUD.draw();
 }
 
 function hexToNormalizedRGB(hex) {

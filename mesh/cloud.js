@@ -1,15 +1,10 @@
 const cloud_sample_size = 64;
 
 class cloud extends base_mesh {
-    constructor(size, height, cloudSpheres, coord) {
+    constructor(size, height) {
         super('raycasting');
         this.size = size;
         this.height = height;
-        this.clouds = cloudSpheres;
-        this.coord = coord
-
-        this.cloudColor = [1.0, 1.0, 1.0]; // Couleur des nuages (blanc)
-        this.cloudsMatrix = null;
 
         this.Init();
     }
@@ -17,52 +12,37 @@ class cloud extends base_mesh {
     Init() {
         super.Init();
 
-        /*for (let spheres = 0; spheres < this.clouds.length ; spheres += 4){
-            if(this.clouds[spheres] != null)
-                this.clouds[spheres] = this.size / 2 + this.clouds[spheres] * this.size / 2;
-            if(this.clouds[spheres+1] != null)
-                this.clouds[spheres+1] = this.height / 2 + this.clouds[spheres+1] * this.height / 2;
-            if(this.clouds[spheres+2] != null)
-                this.clouds[spheres+2] = this.size / 2 + this.clouds[spheres+2] * this.size / 2;
-        }*/
-
-        this.clouds = this.generateRandomSpheres(10, 0.1, 0.5, 1., 1., 1.)
-
-        this.mesh = OBJ.Mesh(new XMLHttpRequest().responseText);
+        // Générer des sphères aléatoires
+        this.clouds = this.generateRandomSpheres(200, this.height/10, this.height/5);
 
         this.mesh = {};
         this.mesh.vertices = [
-            // Plafond (top face) - vertices 0-3
+            // Plafond (top face)
             -this.size, -this.size, this.height,
             this.size, -this.size, this.height,
             this.size, this.size, this.height,
             -this.size, this.size, this.height,
-
-            // Sol (bottom face) - vertices 4-7
+            // Sol (bottom face)
             -this.size, -this.size, 0,
             this.size, -this.size, 0,
             this.size, this.size, 0,
             -this.size, this.size, 0,
-
-            // Devant (front face) - vertices 8-11
+            // Devant (front face)
             -this.size, -this.size, 0,
             this.size, -this.size, 0,
             this.size, -this.size, this.height,
             -this.size, -this.size, this.height,
-
-            // Derriere (back face) - vertices 12-15
+            // Derriere (back face)
             this.size, this.size, 0,
             -this.size, this.size, 0,
             -this.size, this.size, this.height,
             this.size, this.size, this.height,
-
-            // Gauche (left face) - vertices 16-19
+            // Gauche (left face)
             -this.size, this.size, 0,
             -this.size, -this.size, 0,
             -this.size, -this.size, this.height,
             -this.size, this.size, this.height,
-
-            // Droite (right face) - vertices 20-23
+            // Droite (right face)
             this.size, -this.size, 0,
             this.size, this.size, 0,
             this.size, this.size, this.height,
@@ -70,97 +50,58 @@ class cloud extends base_mesh {
         ];
 
         this.mesh.textures = [
-            0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0,  // plafond
-            0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0,  // sol
-            0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0,  // devant
-            0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0,  // derriere
-            0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0,  // gauche
-            0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0   // droite
+            0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+            0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0
         ];
 
         this.mesh.normale = [
-            // Plafond (top) - normal pointing up
-            0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
-
-            // Sol (bottom) - normal pointing down
-            0.0, 0.0, -1.0,
-            0.0, 0.0, -1.0,
-            0.0, 0.0, -1.0,
-            0.0, 0.0, -1.0,
-
-            // Devant (front) - normal pointing forward (negative Y)
-            0.0, -1.0, 0.0,
-            0.0, -1.0, 0.0,
-            0.0, -1.0, 0.0,
-            0.0, -1.0, 0.0,
-
-            // Derriere (back) - normal pointing backward (positive Y)
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
-
-            // Gauche (left) - normal pointing left (negative X)
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0,
-
-            // Droite (right) - normal pointing right (positive X)
-            1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0
+            0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+            0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0,
+            0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0,
+            0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+            -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0,
+            1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0
         ];
 
         this.mesh.indices = [
-            // Plafond
-            0, 1, 2,
-            0, 2, 3,
-
-            // Sol
-            4, 6, 5,
-            4, 7, 6,
-
-            // Devant
-            8, 9, 10,
-            8, 10, 11,
-
-            // Derriere
-            12, 13, 14,
-            12, 14, 15,
-
-            // Gauche
-            16, 17, 18,
-            16, 18, 19,
-
-            // Droite
-            20, 21, 22,
-            20, 22, 23
+            0, 1, 2, 0, 2, 3,
+            4, 6, 5, 4, 7, 6,
+            8, 9, 10, 8, 10, 11,
+            12, 13, 14, 12, 14, 15,
+            16, 17, 18, 16, 18, 19,
+            20, 21, 22, 20, 22, 23
         ];
 
+        // Créer la texture 3D avec le bruit de Perlin basé sur les sphères
         this.cloudsMatrix = new Uint8Array(cloud_sample_size * cloud_sample_size * cloud_sample_size);
 
-        for (let z = 0; z < cloud_sample_size; z += 1) {
-            for (let y = 0; y < cloud_sample_size; y += 1) {
-                for (let x = 0; x < cloud_sample_size; x += 1) {
+        for (let z = 0; z < cloud_sample_size; z++) {
+            for (let y = 0; y < cloud_sample_size; y++) {
+                for (let x = 0; x < cloud_sample_size; x++) {
                     let index = x + y * cloud_sample_size + z * cloud_sample_size * cloud_sample_size;
 
-                    const nx = x / cloud_sample_size;
-                    const ny = y / cloud_sample_size;
-                    const nz = z / cloud_sample_size;
+                    // Normaliser les coordonnées [0, 1]
+                    const nx = x / (cloud_sample_size - 1);
+                    const ny = y / (cloud_sample_size - 1);
+                    const nz = z / (cloud_sample_size - 1);
 
+                    // Convertir en coordonnées monde
                     const worldX = -this.size + nx * 2 * this.size;
                     const worldY = -this.size + ny * 2 * this.size;
                     const worldZ = nz * this.height;
 
                     let density = 0.0;
 
-                    if (this.inSphere(worldX, worldY, worldZ)) {
-                        density = noise3D(noiseVec3(worldX, worldY, worldZ));
+                    // Vérifier si on est dans une sphère
+                    const distToCenter = this.inSphere(worldX, worldY, worldZ);
+                    if (distToCenter !== 0.) {
+                        // Ajouter du bruit de Perlin pour la variation
+                        const noiseValue = noise3D(noiseVec3(worldX * 2, worldY * 2, worldZ * 2));
+                        density = Math.max(0, noiseValue) * distToCenter;
                     }
 
                     this.cloudsMatrix[index] = Math.floor(Math.max(0, Math.min(1, density)) * 255);
@@ -168,34 +109,36 @@ class cloud extends base_mesh {
             }
         }
 
+        // Créer les buffers
         this.mesh.vertexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.vertexBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.mesh.vertices), gl.STATIC_DRAW);
         this.mesh.vertexBuffer.itemSize = 3;
-        this.mesh.vertexBuffer.numItems = 4;
+        this.mesh.vertexBuffer.numItems = 24;
 
         this.mesh.textureBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.textureBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.mesh.textures), gl.STATIC_DRAW);
         this.mesh.textureBuffer.itemSize = 2;
-        this.mesh.textureBuffer.numItems = 4;
+        this.mesh.textureBuffer.numItems = 24;
 
         this.mesh.normalBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.normalBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.mesh.normale), gl.STATIC_DRAW);
         this.mesh.normalBuffer.itemSize = 3;
-        this.mesh.normalBuffer.numItems = this.mesh.normale.length / 3;
+        this.mesh.normalBuffer.numItems = 24;
 
         this.mesh.indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(this.mesh.indices), gl.STATIC_DRAW);
-        this.mesh.indexBuffer.itemSize = 3;
+        this.mesh.indexBuffer.itemSize = 1;
         this.mesh.indexBuffer.numItems = this.mesh.indices.length;
 
         loadShaders(this);
     }
 
     inSphere(xCoo, yCoo, zCoo) {
+        let res = 0.;
         for (let i = 0; i < this.clouds.length; i += 4) {
             const dx = xCoo - this.clouds[i];
             const dy = yCoo - this.clouds[i + 1];
@@ -204,40 +147,22 @@ class cloud extends base_mesh {
             const radiusSq = this.clouds[i + 3] * this.clouds[i + 3];
 
             if (distSq < radiusSq) {
-                return true;
+                res += (radiusSq - distSq) / radiusSq;
             }
         }
-        return false;
+        return res;
     }
 
-    generateRandomSpheres(count, minRadius, maxRadius, minHeight, maxHeight, clustering) {
+    generateRandomSpheres(count, minRadius, maxRadius) {
         const spheres = [];
 
         for (let i = 0; i < count; i++) {
-            // Position X et Y normalisée entre -1 et 1
             let x, y;
+            x = (Math.random() - 0.5) * 2 * (this.size - maxRadius);
+            y = (Math.random() - 0.5) * 2 * (this.size - maxRadius);
 
-            if (clustering > Math.random()) {
-                // Groupé autour d'un point central
-                const centerX = (Math.random() - 0.5) * 2 * this.size;
-                const centerY = (Math.random() - 0.5) * 2 * this.size;
-                x = centerX + (Math.random() - 0.5) * 0.5;
-                y = centerY + (Math.random() - 0.5) * 0.5;
-            } else {
-                // Complètement aléatoire
-                x = (Math.random() - 0.5) * this.size * 2;
-                y = (Math.random() - 0.5) * this.size * 2;
-            }
-
-            // Position Z normalisée entre minHeight et maxHeight
-            const z = minHeight + Math.random() * (maxHeight - minHeight);
-
-            // Rayon aléatoire
+            const z = maxRadius + Math.random() * (this.height - 2 * maxRadius);
             const radius = minRadius + Math.random() * (maxRadius - minRadius);
-
-            // Limite les coordonnées pour que les sphères restent dans le cube
-            x = Math.max(-0.9, Math.min(0.9, x));
-            y = Math.max(-0.9, Math.min(0.9, y));
 
             spheres.push(x, y, z, radius);
         }
@@ -263,40 +188,49 @@ class cloud extends base_mesh {
         }
 
         this.shader.tAttrib = gl.getAttribLocation(this.shader, "aTextureCoord");
-        gl.enableVertexAttribArray(this.shader.tAttrib);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.textureBuffer);
-        gl.vertexAttribPointer(this.shader.tAttrib, this.mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        if (this.shader.tAttrib !== -1) {
+            gl.enableVertexAttribArray(this.shader.tAttrib);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.textureBuffer);
+            gl.vertexAttribPointer(this.shader.tAttrib, 2, gl.FLOAT, false, 0, 0);
+        }
 
-        // Uniforms pour les sphères
-        this.shader.cloudsCoordAndRadius = gl.getUniformLocation(this.shader, "u_spheres");
-        gl.uniform4fv(this.shader.cloudsCoordAndRadius, this.clouds);
+        // Envoyer la taille de la boîte
+        this.shader.boxSizeUniform = gl.getUniformLocation(this.shader, "u_boxSize");
+        if (this.shader.boxSizeUniform !== null) {
+            gl.uniform3f(this.shader.boxSizeUniform, this.size, this.size, this.height);
+        }
 
-        this.shader.cloudColor = gl.getUniformLocation(this.shader, "u_cloudColor");
-        gl.uniform3fv(this.shader.cloudColor, this.cloudColor);
+        // Créer et lier la texture 3D
+        if (!this.cloudsTexture) {
+            this.cloudsTexture = gl.createTexture();
+        }
 
-        this.cloudsTexture = gl.createTexture();
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_3D, this.cloudsTexture);
 
         gl.texImage3D(
             gl.TEXTURE_3D,
-            0,                    // niveau mipmap
-            gl.R8,                // format interne
-            cloud_sample_size,                 // largeur
-            cloud_sample_size,                 // hauteur
-            cloud_sample_size,                 // profondeur
-            0,                    // bordure
-            gl.RED,               // format
-            gl.UNSIGNED_BYTE,     // type
-            this.cloudsMatrix               // données
+            0,
+            gl.R8,
+            cloud_sample_size,
+            cloud_sample_size,
+            cloud_sample_size,
+            0,
+            gl.RED,
+            gl.UNSIGNED_BYTE,
+            this.cloudsMatrix
         );
+
         gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-        gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-        gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
+
         this.shader.texture3D = gl.getUniformLocation(this.shader, "texture_3D");
-        gl.uniform1i(this.shader.texture3D, 1);
+        if (this.shader.texture3D !== null) {
+            gl.uniform1i(this.shader.texture3D, 1);
+        }
     }
 
     draw() {
@@ -309,7 +243,7 @@ class cloud extends base_mesh {
             this.setShadersParams();
 
             mat4.identity(mvMatrix);
-            mat4.translate(mvMatrix, vec3.add(distCENTER, this.coord, vec3.create()));
+            mat4.translate(mvMatrix, distCENTER);
             mat4.multiply(mvMatrix, rotMatrix);
 
             gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
