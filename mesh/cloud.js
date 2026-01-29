@@ -1,5 +1,5 @@
 class cloud extends base_mesh {
-    constructor(size, height, cloudSpheres, coord){
+    constructor(size, height, cloudSpheres, coord) {
         super('raycasting');
         this.size = size;
         this.height = height;
@@ -12,7 +12,7 @@ class cloud extends base_mesh {
         this.Init();
     }
 
-    Init(){
+    Init() {
         super.Init();
 
         /*for (let spheres = 0; spheres < this.clouds.length ; spheres += 4){
@@ -142,9 +142,9 @@ class cloud extends base_mesh {
 
         this.cloudsMatrix = new Uint8Array(cloud_sample_size * cloud_sample_size * cloud_sample_size);
 
-        for(let z = 0; z < cloud_sample_size; z += 1){
-            for(let y = 0; y < cloud_sample_size; y += 1){
-                for(let x = 0; x < cloud_sample_size; x += 1) {
+        for (let z = 0; z < cloud_sample_size; z += 1) {
+            for (let y = 0; y < cloud_sample_size; y += 1) {
+                for (let x = 0; x < cloud_sample_size; x += 1) {
                     let index = x + y * cloud_sample_size + z * cloud_sample_size * cloud_sample_size;
 
                     const nx = x / cloud_sample_size;
@@ -157,7 +157,7 @@ class cloud extends base_mesh {
 
                     let density = 0.0;
 
-                    if(this.inSphere(worldX, worldY, worldZ)) {
+                    if (this.inSphere(worldX, worldY, worldZ)) {
                         density = noise3D(noiseVec3(worldX, worldY, worldZ));
                     }
 
@@ -193,15 +193,15 @@ class cloud extends base_mesh {
         loadShaders(this);
     }
 
-    inSphere(xCoo, yCoo, zCoo){
+    inSphere(xCoo, yCoo, zCoo) {
         for (let i = 0; i < this.clouds.length; i += 4) {
             const dx = xCoo - this.clouds[i];
-            const dy = yCoo - this.clouds[i+1];
-            const dz = zCoo - this.clouds[i+2];
+            const dy = yCoo - this.clouds[i + 1];
+            const dz = zCoo - this.clouds[i + 2];
             const distSq = dx * dx + dy * dy + dz * dz;
-            const radiusSq = this.clouds[i+3] * this.clouds[i+3];
+            const radiusSq = this.clouds[i + 3] * this.clouds[i + 3];
 
-            if(distSq < radiusSq){
+            if (distSq < radiusSq) {
                 return true;
             }
         }
@@ -298,30 +298,31 @@ class cloud extends base_mesh {
     }
 
     draw() {
-        if(this.shader && this.loaded==4) {
+        if (this.shader && this.loaded == 4) {
 
-        if(this.shader && this.loaded == 4) {
-            gl.enable(gl.BLEND);
-            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-            gl.depthMask(false);
-            gl.disable(gl.CULL_FACE);
+            if (this.shader && this.loaded == 4) {
+                gl.enable(gl.BLEND);
+                gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+                gl.depthMask(false);
+                gl.disable(gl.CULL_FACE);
 
-            this.setShadersParams();
+                this.setShadersParams();
 
-            mat4.identity(mvMatrix);
-            mat4.translate(mvMatrix, vec3.add(distCENTER, this.coord, vec3.create()));
-            mat4.multiply(mvMatrix, rotMatrix);
+                mat4.identity(mvMatrix);
+                mat4.translate(mvMatrix, vec3.add(distCENTER, this.coord, vec3.create()));
+                mat4.multiply(mvMatrix, rotMatrix);
 
-            gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
-            gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
-            gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
+                gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
+                gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
+                gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
-            gl.drawElements(gl.TRIANGLES, this.mesh.indexBuffer.numItems, gl.UNSIGNED_INT, 0);
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
+                gl.drawElements(gl.TRIANGLES, this.mesh.indexBuffer.numItems, gl.UNSIGNED_INT, 0);
 
-            gl.enable(gl.CULL_FACE);
-            gl.depthMask(true);
-            gl.disable(gl.BLEND);
+                gl.enable(gl.CULL_FACE);
+                gl.depthMask(true);
+                gl.disable(gl.BLEND);
+            }
         }
     }
 }
