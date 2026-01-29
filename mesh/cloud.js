@@ -1,3 +1,5 @@
+
+const cloud_sample_size = 64;
 class cloud extends base_mesh{
 
     constructor(size, height, particlesCount, cloudSpheres){
@@ -16,14 +18,16 @@ class cloud extends base_mesh{
     Init(){
         super.Init();
 
-        for (let spheres = 0; spheres < this.clouds.length ; spheres += 4){
+        /*for (let spheres = 0; spheres < this.clouds.length ; spheres += 4){
             if(this.clouds[spheres] != null)
                 this.clouds[spheres] = this.size / 2 + this.clouds[spheres] * this.size / 2;
             if(this.clouds[spheres+1] != null)
                 this.clouds[spheres+1] = this.height / 2 + this.clouds[spheres+1] * this.height / 2;
             if(this.clouds[spheres+2] != null)
                 this.clouds[spheres+2] = this.size / 2 + this.clouds[spheres+2] * this.size / 2;
-        }
+        }*/
+
+        this.clouds = this.generateRandomSpheres(10, 0.1, 0.5, 0, 1, 1)
 
         this.mesh = OBJ.Mesh(new XMLHttpRequest().responseText);
 
@@ -139,14 +143,28 @@ class cloud extends base_mesh{
             20, 22, 23
         ];
 
-        this.cloudsMatrix = makeMultDirArray(64, 3);
-        for(let x = 0; x < 64; x += 1){
-            for(let y = 0; y < 64; y += 1){
-                for(let z = 0; z < 64; z += 1) {
-                    //if(this.inSphere(x/64 * this.size, x/64 * this.size, x/64 * this.height))
-                    this.cloudsMatrix[x][y][z] = noise3D(noiseVec3(x,y,z));
-                    //else
-                    //    this.cloudsMatrix[x][y][z] = 0;
+        this.cloudsMatrix = new Uint8Array(cloud_sample_size * cloud_sample_size * cloud_sample_size);
+
+        for(let z = 0; z < cloud_sample_size; z += 1){
+            for(let y = 0; y < cloud_sample_size; y += 1){
+                for(let x = 0; x < cloud_sample_size; x += 1) {
+                    let index = x + y * cloud_sample_size + z * cloud_sample_size * cloud_sample_size;
+
+                    const nx = x / cloud_sample_size;
+                    const ny = y / cloud_sample_size;
+                    const nz = z / cloud_sample_size;
+
+                    const worldX = -this.size + nx * 2 * this.size;
+                    const worldY = -this.size + ny * 2 * this.size;
+                    const worldZ = nz * this.height;
+
+                    let density = 0.0;
+
+                    if(this.inSphere(worldX, worldY, worldZ)) {
+                        density = noise3D(noiseVec3(worldX, worldY, worldZ));
+                    }
+
+                    this.cloudsMatrix[index] = Math.floor(Math.max(0, Math.min(1, density)) * 255);
                 }
             }
         }
@@ -180,14 +198,52 @@ class cloud extends base_mesh{
 
     inSphere(xCoo, yCoo, zCoo){
         for (let i = 0; i < this.clouds.length; i += 4) {
-            if(this.clouds[i+3] * this.clouds[i+3] <
-                (xCoo - this.clouds[i]) * (xCoo - this.clouds[i]) +
-                (yCoo - this.clouds[i+1]) * (yCoo - this.clouds[i+1]) +
-                (zCoo - this.clouds[i+2]) * (zCoo - this.clouds[i+2])){
+            const dx = xCoo - this.clouds[i];
+            const dy = yCoo - this.clouds[i+1];
+            const dz = zCoo - this.clouds[i+2];
+            const distSq = dx * dx + dy * dy + dz * dz;
+            const radiusSq = this.clouds[i+3] * this.clouds[i+3];
+
+            if(distSq < radiusSq){
                 return true;
             }
         }
         return false;
+    }
+
+    generateRandomSpheres(count, minRadius, maxRadius, minHeight, maxHeight, clustering) {
+        const spheres = [];
+
+        for (let i = 0; i < count; i++) {
+            // Position X et Y normalisée entre -1 et 1
+            let x, y;
+
+            if (clustering > Math.random()) {
+                // Groupé autour d'un point central
+                const centerX = (Math.random() - 0.5) * 2 * this.size;
+                const centerY = (Math.random() - 0.5) * 2 * this.size;
+                x = centerX + (Math.random() - 0.5) * 0.5;
+                y = centerY + (Math.random() - 0.5) * 0.5;
+            } else {
+                // Complètement aléatoire
+                x = (Math.random() - 0.5) * this.size * 2;
+                y = (Math.random() - 0.5) * this.size * 2;
+            }
+
+            // Position Z normalisée entre minHeight et maxHeight
+            const z = minHeight + Math.random() * (maxHeight - minHeight);
+
+            // Rayon aléatoire
+            const radius = minRadius + Math.random() * (maxRadius - minRadius);
+
+            // Limite les coordonnées pour que les sphères restent dans le cube
+            x = Math.max(-0.9, Math.min(0.9, x));
+            y = Math.max(-0.9, Math.min(0.9, y));
+
+            spheres.push(x, y, z, radius);
+        }
+
+        return spheres;
     }
 
     setShadersParams() {
@@ -216,17 +272,34 @@ class cloud extends base_mesh{
         this.shader.cloudColor = gl.getUniformLocation(this.shader, "u_cloudColor");
         gl.uniform3fv(this.shader.cloudColor, this.cloudColor);
 
+        this.cloudsTexture = gl.createTexture();
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_3D, this.cloudsTexture);
+
+        gl.texImage3D(
+            gl.TEXTURE_3D,
+            0,                    // niveau mipmap
+            gl.R8,                // format interne
+            cloud_sample_size,                 // largeur
+            cloud_sample_size,                 // hauteur
+            cloud_sample_size,                 // profondeur
+            0,                    // bordure
+            gl.RED,               // format
+            gl.UNSIGNED_BYTE,     // type
+            this.cloudsMatrix               // données
+        );
+        gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.REPEAT);
         this.shader.texture3D = gl.getUniformLocation(this.shader, "texture_3D");
-        gl.uniform3fv(this.shader.texture3D, this.cloudsMatrix);
+        gl.uniform1i(this.shader.texture3D, 1);
     }
 
     // --------------------------------------------
     draw() {
         if(this.shader && this.loaded==4) {
-            // Active le blending pour la transparence
-            gl.enable(gl.BLEND);
-            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-            gl.depthMask(false);
 
             this.setShadersParams();
             mat4.identity(mvMatrix);
@@ -241,9 +314,6 @@ class cloud extends base_mesh{
 
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
             gl.drawElements(gl.TRIANGLES, this.mesh.indexBuffer.numItems, gl.UNSIGNED_INT, 0);
-
-            gl.depthMask(true);
-            gl.disable(gl.BLEND);
         }
     }
 }

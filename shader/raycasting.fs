@@ -1,16 +1,29 @@
+#version 300 es
 #define MAX_SPHERES 32
 
 precision mediump float;
 
 uniform float density;
-uniform vec3 texture_3D;
-varying vec3 pos3D;
+uniform highp sampler3D texture_3D;
+uniform vec3 u_boxSize;  // Taille de la boîte (width, depth, height)
+
+in vec3 pos3D;      // Position en view space
+in vec3 localPos;   // Position locale NON transformée
+out vec4 fragColor;
 
 void main(void) {
-    //float color = noise3D(pos3D);
-	gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0);
+    // Convertit la position locale en coordonnées de texture normalisées [0, 1]
+    // localPos va de [-size, -size, 0] à [size, size, height]
+    vec3 texCoord;
+    texCoord.x = (localPos.x - 1.) * 0.5 ;  // de [-size, size] à [0, 1]
+    texCoord.y = (localPos.y - 1.) * 0.5 ;  // de [-size, size] à [0, 1]
+    texCoord.z = (localPos.z + 1.) * 0.5 ;   // de [0, height] à [0, 1]
 
-	vec3 rayDir = normalize(pos3D);  // Ray direction from camera through fragment
+    // Échantillonne la texture 3D
+    float color = texture(texture_3D, texCoord).r;
+
+    // Affiche la valeur de la texture
+    fragColor = vec4(color ,color ,color , 1.0);
 }
 
 //void main(void) {
