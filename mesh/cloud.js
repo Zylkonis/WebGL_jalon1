@@ -1,10 +1,12 @@
+const cloud_sample_size = 64;
+
 class cloud extends base_mesh {
     constructor(size, height, cloudSpheres, coord) {
         super('raycasting');
         this.size = size;
         this.height = height;
         this.clouds = cloudSpheres;
-        this.particlesCount = particlesCount;
+        this.coord = coord
 
         this.cloudColor = [1.0, 1.0, 1.0]; // Couleur des nuages (blanc)
         this.cloudsMatrix = null;
@@ -299,30 +301,27 @@ class cloud extends base_mesh {
 
     draw() {
         if (this.shader && this.loaded == 4) {
+            gl.enable(gl.BLEND);
+            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+            gl.depthMask(false);
+            gl.disable(gl.CULL_FACE);
 
-            if (this.shader && this.loaded == 4) {
-                gl.enable(gl.BLEND);
-                gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-                gl.depthMask(false);
-                gl.disable(gl.CULL_FACE);
+            this.setShadersParams();
 
-                this.setShadersParams();
+            mat4.identity(mvMatrix);
+            mat4.translate(mvMatrix, vec3.add(distCENTER, this.coord, vec3.create()));
+            mat4.multiply(mvMatrix, rotMatrix);
 
-                mat4.identity(mvMatrix);
-                mat4.translate(mvMatrix, vec3.add(distCENTER, this.coord, vec3.create()));
-                mat4.multiply(mvMatrix, rotMatrix);
+            gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
+            gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
+            gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
 
-                gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
-                gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);
-                gl.uniformMatrix4fv(this.shader.pMatrixUniform, false, pMatrix);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
+            gl.drawElements(gl.TRIANGLES, this.mesh.indexBuffer.numItems, gl.UNSIGNED_INT, 0);
 
-                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
-                gl.drawElements(gl.TRIANGLES, this.mesh.indexBuffer.numItems, gl.UNSIGNED_INT, 0);
-
-                gl.enable(gl.CULL_FACE);
-                gl.depthMask(true);
-                gl.disable(gl.BLEND);
-            }
+            gl.enable(gl.CULL_FACE);
+            gl.depthMask(true);
+            gl.disable(gl.BLEND);
         }
     }
 }
