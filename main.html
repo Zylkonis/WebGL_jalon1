@@ -29,10 +29,10 @@
                 <input type="color" onchange="SkyChangeColor(this.value);"/>
                 <label for="li_value">Skybox color</label>
 
-                <input type="range" id="nbClouds_value" name="nbClouds_value" min="0" max="500" oninput="CloudChangeNb(this.value);"/>
-                <label for="li_value">Number of clouds</label>
+                <input type="range" id="nbClouds_value" name="nbClouds_value" min="0" max="500" value="200" oninput="CloudChangeNb(this.value);"/>
+                <p id="label_nbClouds">Number of clouds : 200</p>
 
-                <input type="button" value="Regenerate clouds" onclick="RegenerateClouds()"/>
+                <input class="button" type="button" value="Regenerate clouds" onclick="RegenerateClouds()"/>
                 <br>
                 <input type="color" onchange="CloudChangeColor(this.value);"/>
                 <label for="li_value">Clouds color</label>
