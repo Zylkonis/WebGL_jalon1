@@ -110,11 +110,8 @@ void main(void) {
 
             // Couleur du nuage avec variation de gris (pas blanc pur)
             // Les nuages réels varient du gris clair au gris foncé
-            vec3 cloudBaseColor = vec3(0.9, 0.92, 0.95);  // Légèrement bleuté
-            vec3 sampleColor = cloudBaseColor * shading;
+            vec3 sampleColor = objColor * shading;
 
-            // Couleur du nuage (blanc)
-            vec3 sampleColor = vec3(objColor);
             // Absorption ajustée pour un rendu plus doux
             float absorption = 1.0 - exp(-densitySample * stepSize * 60.0); //TODO: slider controle absorbtion (60.0)
 
