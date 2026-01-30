@@ -36,8 +36,15 @@ vec3 applyWindMovement(vec3 texCoord, vec3 localPosition) {
     // Calculer le vecteur de déplacement basé sur l'angle et la vitesse
     vec2 windDirection = vec2(cos(u_windAngle), sin(u_windAngle));
 
+    // Utiliser la hauteur (z) de la position locale comme facteur de temps
+    // Les nuages plus hauts bougent différemment
+    float heightFactor = localPosition.z / (u_boxSize.z * 10.);
+
     // Créer un mouvement basé sur le temps uniforme
     vec2 offset = windDirection * u_windSpeed * u_time;
+
+    // Ajouter une variation en hauteur (les nuages plus hauts bougent plus vite)
+    offset *= (1.0 + heightFactor * 0.5);
 
     // Appliquer le décalage avec wrapping (pour que le nuage boucle)
     vec3 movedTexCoord = texCoord;
