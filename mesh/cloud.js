@@ -243,7 +243,7 @@ class cloud extends base_mesh {
         let time = performance.now() / 1000.0; // Temps en secondes
         gl.uniform1f(gl.getUniformLocation(this.shader, "u_time"), time);
         gl.uniform1f(gl.getUniformLocation(this.shader, "u_windAngle"), 0.); //TODO: Direction du vent Slider (de 0 à 2*pi)
-        gl.uniform1f(gl.getUniformLocation(this.shader, "u_windSpeed"), 0.5); //TODO: Vitesse Slider (de 0 à 0.5)
+        gl.uniform1f(gl.getUniformLocation(this.shader, "u_windSpeed"), 0.1); //TODO: Vitesse Slider (de 0 à 0.5)
     }
 
     draw() {
