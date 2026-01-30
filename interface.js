@@ -7,6 +7,14 @@ function CloudChangeColor(value){
     CLOUD.objColor = hexToNormalizedRGB(value);
 }
 
+function CloudChangeNb(value){
+    CLOUD.nbClouds = value;
+}
+
+function RegenerateClouds(){
+    CLOUD.GenerateCloud();
+}
+
 function objFilePicker(file) {
     OBJ1.objName = URL.createObjectURL(file);
     OBJ1.Init();

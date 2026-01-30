@@ -6,15 +6,13 @@ class cloud extends base_mesh {
         this.size = size;
         this.height = height;
         this.objColor = [1., 1., 1.];
+        this.nbClouds = 200;
 
         this.Init();
     }
 
     Init() {
         super.Init();
-
-        // Générer des sphères aléatoires
-        this.clouds = this.generateRandomSpheres(200, this.height/10, this.height/5);
 
         this.mesh = {};
         this.mesh.vertices = [
@@ -77,6 +75,41 @@ class cloud extends base_mesh {
             20, 21, 22, 20, 22, 23
         ];
 
+        this.GenerateCloud();
+
+        // Créer les buffers
+        this.mesh.vertexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.vertexBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.mesh.vertices), gl.STATIC_DRAW);
+        this.mesh.vertexBuffer.itemSize = 3;
+        this.mesh.vertexBuffer.numItems = 24;
+
+        this.mesh.textureBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.textureBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.mesh.textures), gl.STATIC_DRAW);
+        this.mesh.textureBuffer.itemSize = 2;
+        this.mesh.textureBuffer.numItems = 24;
+
+        this.mesh.normalBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.normalBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.mesh.normale), gl.STATIC_DRAW);
+        this.mesh.normalBuffer.itemSize = 3;
+        this.mesh.normalBuffer.numItems = 24;
+
+        this.mesh.indexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(this.mesh.indices), gl.STATIC_DRAW);
+        this.mesh.indexBuffer.itemSize = 1;
+        this.mesh.indexBuffer.numItems = this.mesh.indices.length;
+
+        loadShaders(this);
+    }
+
+    GenerateCloud(){
+        // Générer des sphères aléatoires
+        this.clouds = this.generateRandomSpheres(this.nbClouds, this.height/10, this.height/5);
+
+
         // Créer la texture 3D avec le bruit de Perlin basé sur les sphères
         this.cloudsMatrix = new Uint8Array(cloud_sample_size * cloud_sample_size * cloud_sample_size);
 
@@ -109,33 +142,6 @@ class cloud extends base_mesh {
                 }
             }
         }
-
-        // Créer les buffers
-        this.mesh.vertexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.vertexBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.mesh.vertices), gl.STATIC_DRAW);
-        this.mesh.vertexBuffer.itemSize = 3;
-        this.mesh.vertexBuffer.numItems = 24;
-
-        this.mesh.textureBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.textureBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.mesh.textures), gl.STATIC_DRAW);
-        this.mesh.textureBuffer.itemSize = 2;
-        this.mesh.textureBuffer.numItems = 24;
-
-        this.mesh.normalBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.mesh.normalBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.mesh.normale), gl.STATIC_DRAW);
-        this.mesh.normalBuffer.itemSize = 3;
-        this.mesh.normalBuffer.numItems = 24;
-
-        this.mesh.indexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mesh.indexBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(this.mesh.indices), gl.STATIC_DRAW);
-        this.mesh.indexBuffer.itemSize = 1;
-        this.mesh.indexBuffer.numItems = this.mesh.indices.length;
-
-        loadShaders(this);
     }
 
     inSphere(xCoo, yCoo, zCoo) {
