@@ -1,3 +1,8 @@
+function SkyChangeColor(value){
+    const skyColor = hexToNormalizedRGB(value);
+    gl.clearColor(skyColor[0], skyColor[1], skyColor[2], 1.0);
+}
+
 function objFilePicker(file) {
     OBJ1.objName = URL.createObjectURL(file);
     OBJ1.Init();
