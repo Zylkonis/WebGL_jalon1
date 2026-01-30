@@ -7,6 +7,9 @@ uniform vec3 u_boxSize;  // Taille de la boîte (width, depth, height)
 uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
 uniform vec3 objColor;
+uniform float u_windAngle;   // Angle du vent en radians (0 = axe X positif)
+uniform float u_windSpeed;   // Vitesse du vent
+uniform float u_time;        // Temps pour l'animation
 
 in vec3 pos3D;      // Position en view space
 in vec3 localPos;   // Position locale NON transformée
@@ -26,6 +29,22 @@ vec3 localToTexCoord(vec3 local) {
 vec3 viewToLocal(vec3 viewPos) {
     vec4 localPos4 = inverse(uMVMatrix) * vec4(viewPos, 1.0);
     return localPos4.xyz;
+}
+
+// Applique le mouvement du vent aux coordonnées de texture
+vec3 applyWindMovement(vec3 texCoord, vec3 localPosition) {
+    // Calculer le vecteur de déplacement basé sur l'angle et la vitesse
+    vec2 windDirection = vec2(cos(u_windAngle), sin(u_windAngle));
+
+    // Créer un mouvement basé sur le temps uniforme
+    vec2 offset = windDirection * u_windSpeed * u_time;
+
+    // Appliquer le décalage avec wrapping (pour que le nuage boucle)
+    vec3 movedTexCoord = texCoord;
+    movedTexCoord.x = fract(texCoord.x + offset.x);
+    movedTexCoord.y = fract(texCoord.y + offset.y);
+
+    return movedTexCoord;
 }
 
 // Calcule un éclairage simple basé sur la densité et la profondeur
@@ -101,8 +120,11 @@ void main(void) {
             continue;
         }
 
-        // Échantillonner la densité depuis la texture 3D
-        float densitySample = texture(texture_3D, texCoord).r;
+        // Appliquer le mouvement du vent en utilisant la position locale
+        vec3 movedTexCoord = applyWindMovement(texCoord, currentPos);
+
+        // Échantillonner la densité depuis la texture 3D avec le mouvement
+        float densitySample = texture(texture_3D, movedTexCoord).r;
 
         if (densitySample > 0.01) {
             // Calcul de l'ombrage du nuage
