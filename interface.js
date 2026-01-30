@@ -9,6 +9,8 @@ function CloudChangeColor(value){
 
 function CloudChangeNb(value){
     CLOUD.nbClouds = value;
+    document.getElementById("label_nbClouds")
+        .innerText=("Number of clouds : "+value);
 }
 
 function RegenerateClouds(){
