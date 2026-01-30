@@ -3,6 +3,10 @@ function SkyChangeColor(value){
     gl.clearColor(skyColor[0], skyColor[1], skyColor[2], 1.0);
 }
 
+function CloudChangeColor(value){
+    CLOUD.objColor = hexToNormalizedRGB(value);
+}
+
 function objFilePicker(file) {
     OBJ1.objName = URL.createObjectURL(file);
     OBJ1.Init();

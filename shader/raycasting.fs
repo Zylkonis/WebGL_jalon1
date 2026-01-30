@@ -6,6 +6,7 @@ uniform highp sampler3D texture_3D;
 uniform vec3 u_boxSize;  // Taille de la boîte (width, depth, height)
 uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
+uniform vec3 objColor;
 
 in vec3 pos3D;      // Position en view space
 in vec3 localPos;   // Position locale NON transformée
@@ -98,7 +99,7 @@ void main(void) {
             float absorption = 1.0 - exp(-densitySample * step);
 
             // Couleur du nuage (blanc)
-            vec3 sampleColor = vec3(1.0, 1.0, 1.0);
+            vec3 sampleColor = vec3(objColor);
 
             // Accumulation front-to-back
             outColor.rgb += (1.0 - globalAlphaAcc) * sampleColor * absorption;

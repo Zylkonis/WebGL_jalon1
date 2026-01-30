@@ -5,6 +5,7 @@ class cloud extends base_mesh {
         super('raycasting');
         this.size = size;
         this.height = height;
+        this.objColor = [1., 1., 1.];
 
         this.Init();
     }
