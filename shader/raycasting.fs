@@ -23,32 +23,39 @@ vec3 localToTexCoord(vec3 local) {
 
 // Convertit une position en view space vers l'espace local
 vec3 viewToLocal(vec3 viewPos) {
-    // Inverse de la transformation uMVMatrix
     vec4 localPos4 = inverse(uMVMatrix) * vec4(viewPos, 1.0);
     return localPos4.xyz;
+}
+
+// Calcule un éclairage simple basé sur la densité et la profondeur
+float calculateCloudShading(float density, float depth, float maxDepth) {
+    // Atténuation en profondeur (les parties profondes sont plus sombres)
+    float depthFactor = 1.0 - (depth / maxDepth) * 0.5;     //TODO: slider controle facteur profondeur (0.5)
+
+    // Les zones denses diffusent moins de lumière (plus sombres)
+    float densityFactor = 1.0 - density * 0.7;  //TODO: slider controle densité (0.7)
+
+    return depthFactor * densityFactor;
 }
 
 void main(void) {
     vec4 outColor = vec4(0.0, 0.0, 0.0, 0.0);
 
-    float step = 0.02;
-    int maxSteps = 128;
+    int numSteps = 128;
 
-    // Ray marching en espace vue
-    vec3 rayDir = normalize(pos3D.xyz);
-    vec3 rayOrigin = vec3(0.0, 0.0, 0.0);
+    // Ray marching en espace LOCAL
+    vec3 rayOriginLocal = viewToLocal(vec3(0.0, 0.0, 0.0));
+    vec3 rayEndLocal = viewToLocal(normalize(pos3D.xyz));
+    vec3 rayDirLocal = normalize(rayEndLocal - rayOriginLocal);
 
     float globalAlphaAcc = 0.0;
+    float transmittance = 1.0;  // Pour le calcul de la lumière transmise
 
     // Calculer l'intersection avec la bounding box en espace local
     vec3 boxMin = vec3(-u_boxSize.x, -u_boxSize.y, 0.0);
     vec3 boxMax = vec3(u_boxSize.x, u_boxSize.y, u_boxSize.z);
 
-    // Transformer rayOrigin et rayDir en espace local pour l'intersection
-    vec3 rayOriginLocal = viewToLocal(rayOrigin);
-    vec3 rayDirLocal = normalize(viewToLocal(rayOrigin + rayDir) - rayOriginLocal);
-
-    // Ray-box intersection (algorithme de Smits)
+    // Ray-box intersection
     vec3 invRayDir = 1.0 / rayDirLocal;
     vec3 tMin = (boxMin - rayOriginLocal) * invRayDir;
     vec3 tMax = (boxMax - rayOriginLocal) * invRayDir;
@@ -66,24 +73,27 @@ void main(void) {
     float tStart = max(tNear, 0.0);
     float tEnd = tFar;
 
-    // Ray marching le long du rayon
-    for (int stepIdx = 0; stepIdx < 128; stepIdx++) {
-        if (stepIdx >= maxSteps) break;
-        if (globalAlphaAcc > 0.999) break;
+    // Calculer la distance totale à parcourir dans la boîte
+    float totalDistance = tEnd - tStart;
 
-        float t = tStart + float(stepIdx) * step;
-        if (t >= tEnd) break;
+    // Calculer la taille du pas en fonction de la distance
+    float stepSize = totalDistance / float(numSteps);
 
-        // Position actuelle en espace vue
-        vec3 marchPosView = rayOrigin + rayDir * t;
+    // Ray marching avec exactement 128 pas
+    for (int stepIdx = 0; stepIdx < 200; stepIdx++) {
+        if (globalAlphaAcc > 0.95) break;  // Arrêt anticipé pour les nuages opaques
 
-        // Convertir en espace local
-        vec3 marchPosLocal = viewToLocal(marchPosView);
+        // Calcul de la position le long du rayon
+        float t = tStart + float(stepIdx) * stepSize;
+        float depth = float(stepIdx) * stepSize;
+
+        // Position actuelle en espace LOCAL
+        vec3 currentPos = rayOriginLocal + rayDirLocal * t;
 
         // Convertir en coordonnées de texture
-        vec3 texCoord = localToTexCoord(marchPosLocal);
+        vec3 texCoord = localToTexCoord(currentPos);
 
-        // Vérifier que nous sommes dans les limites [0, 1]
+        // Vérification des limites (sécurité)
         if (texCoord.x < 0.0 || texCoord.x > 1.0 ||
             texCoord.y < 0.0 || texCoord.y > 1.0 ||
             texCoord.z < 0.0 || texCoord.z > 1.0) {
@@ -94,20 +104,34 @@ void main(void) {
         float densitySample = texture(texture_3D, texCoord).r;
 
         if (densitySample > 0.01) {
-            // Absorption de la lumière
-            float absorption = 1.0 - exp(-densitySample * step);
+            // Calcul de l'ombrage du nuage
+            float shading = calculateCloudShading(densitySample, depth, totalDistance);
 
-            // Couleur du nuage (blanc)
-            vec3 sampleColor = vec3(1.0, 1.0, 1.0);
+            // Couleur du nuage avec variation de gris (pas blanc pur)
+            // Les nuages réels varient du gris clair au gris foncé
+            vec3 cloudBaseColor = vec3(0.9, 0.92, 0.95);  // Légèrement bleuté
+            vec3 sampleColor = cloudBaseColor * shading;
 
-            // Accumulation front-to-back
-            outColor.rgb += (1.0 - globalAlphaAcc) * sampleColor * absorption;
-            globalAlphaAcc += (1.0 - globalAlphaAcc) * absorption;
+            // Absorption ajustée pour un rendu plus doux
+            float absorption = 1.0 - exp(-densitySample * stepSize * 60.0); //TODO: slider controle absorbtion (60.0)
+
+            // Atténuation de la lumière à travers le nuage
+            transmittance *= exp(-densitySample * stepSize * 35.0); //TODO: slider controle transmitance (35.0)
+
+            // Accumulation front-to-back avec atténuation
+            float weight = absorption * transmittance;
+            outColor.rgb += sampleColor * weight;
+            globalAlphaAcc += weight;
         }
     }
 
     if (globalAlphaAcc < 0.01) {
         discard;
+    }
+
+    // Normaliser la couleur par l'alpha accumulé pour éviter le sur-éclairage
+    if (globalAlphaAcc > 0.01) {
+        outColor.rgb /= max(globalAlphaAcc, 0.01);
     }
 
     outColor.a = clamp(globalAlphaAcc, 0.0, 1.0);
