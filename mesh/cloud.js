@@ -7,6 +7,8 @@ class cloud extends base_mesh {
         this.height = height;
         this.objColor = [1., 1., 1.];
         this.nbClouds = 200;
+        this.windDirection = 0.;
+        this.windSpeed = 0.;
 
         this.Init();
     }
@@ -242,8 +244,8 @@ class cloud extends base_mesh {
         // Dans votre boucle de rendu
         let time = performance.now() / 1000.0; // Temps en secondes
         gl.uniform1f(gl.getUniformLocation(this.shader, "u_time"), time);
-        gl.uniform1f(gl.getUniformLocation(this.shader, "u_windAngle"), 0.); //TODO: Direction du vent Slider (de 0 à 2*pi)
-        gl.uniform1f(gl.getUniformLocation(this.shader, "u_windSpeed"), 0.5); //TODO: Vitesse Slider (de 0 à 0.5)
+        gl.uniform1f(gl.getUniformLocation(this.shader, "u_windAngle"), this.windDirection);
+        gl.uniform1f(gl.getUniformLocation(this.shader, "u_windSpeed"), this.windSpeed );
     }
 
     draw() {

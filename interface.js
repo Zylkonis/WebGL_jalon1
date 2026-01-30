@@ -13,6 +13,14 @@ function CloudChangeNb(value){
         .innerText=("Number of clouds : "+value);
 }
 
+function CloudChangeAngle(value) {
+    CLOUD.windDirection = value
+}
+
+function CloudChangeSpeed(value) {
+    CLOUD.windSpeed = value
+}
+
 function RegenerateClouds(){
     CLOUD.GenerateCloud();
 }

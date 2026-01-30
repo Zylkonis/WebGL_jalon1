@@ -50,10 +50,10 @@ vec3 applyWindMovement(vec3 texCoord, vec3 localPosition) {
 // Calcule un éclairage simple basé sur la densité et la profondeur
 float calculateCloudShading(float density, float depth, float maxDepth) {
     // Atténuation en profondeur (les parties profondes sont plus sombres)
-    float depthFactor = 1.0 - (depth / maxDepth) * 0.5;     //TODO: slider controle facteur profondeur (0.5)
+    float depthFactor = 1.0 - (depth / maxDepth) * 0.8;     //TODO: slider controle facteur profondeur (0.5)
 
     // Les zones denses diffusent moins de lumière (plus sombres)
-    float densityFactor = 1.0 - density * 0.7;  //TODO: slider controle densité (0.7)
+    float densityFactor = 1.0 - density * 0.4;  //TODO: slider controle densité (0.7)
 
     return depthFactor * densityFactor;
 }

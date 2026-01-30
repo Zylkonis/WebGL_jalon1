@@ -26,16 +26,22 @@
 
         <div id="options">
             <div>
-                <input type="color" onchange="SkyChangeColor(this.value);"/>
-                <label for="li_value">Skybox color</label>
+                <input type="color" id="skyColorPicker" onchange="SkyChangeColor(this.value);"/>
+                <label for="skyColorPicker">Skybox color</label>
 
                 <input type="range" id="nbClouds_value" name="nbClouds_value" min="0" max="500" value="200" oninput="CloudChangeNb(this.value);"/>
                 <p id="label_nbClouds">Number of clouds : 200</p>
 
                 <input class="button" type="button" value="Regenerate clouds" onclick="RegenerateClouds()"/>
                 <br>
-                <input type="color" onchange="CloudChangeColor(this.value);"/>
-                <label for="li_value">Clouds color</label>
+                <input type="color" id="cloudsColorPicker" onchange="CloudChangeColor(this.value);"/>
+                <label for="cloudsColorPicker">Clouds color</label>
+
+                <input type="range" id="angleCloud_value" name="angleCloud_value" min="0" max="6.28318530718" value="0" step="0.01" oninput="CloudChangeAngle(this.value);"/>
+                <label for="angleCloud_value">Clouds angle</label>
+
+                <input type="range" id="speedCloud_value" name="speedCloud_value" min="0" max="1" value="0.1" step="0.01" oninput="CloudChangeSpeed(this.value);"/>
+                <label for="speedCloud_value">Clouds speed</label>
             </div>
             <HR WIDTH="100%">
             <input type="file" id="filePicker" accept=".obj" onChange="objFilePicker(this.files[0]);"/>
