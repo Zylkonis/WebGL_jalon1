@@ -25,6 +25,14 @@
         <canvas id="WebGL-test" style="border:none;" width="800" height="600"></canvas>
 
         <div id="options">
+            <div>
+                <input type="color" onchange="SkyChangeColor(this.value);"/>
+                <label for="li_value">Skybox color</label>
+
+                <input type="color" onchange="CloudChangeColor(this.value);"/>
+                <label for="li_value">Clouds color</label>
+            </div>
+            <HR WIDTH="100%">
             <input type="file" id="filePicker" accept=".obj" onChange="objFilePicker(this.files[0]);"/>
             <select id="objSelect" onChange="objChangeSelect(this.value);">
                 <option value="bunny.obj" selected>Bunny</option>

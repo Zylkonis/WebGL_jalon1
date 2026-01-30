@@ -6,6 +6,7 @@ uniform highp sampler3D texture_3D;
 uniform vec3 u_boxSize;  // Taille de la boîte (width, depth, height)
 uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
+uniform vec3 objColor;
 
 in vec3 pos3D;      // Position en view space
 in vec3 localPos;   // Position locale NON transformée
@@ -112,6 +113,8 @@ void main(void) {
             vec3 cloudBaseColor = vec3(0.9, 0.92, 0.95);  // Légèrement bleuté
             vec3 sampleColor = cloudBaseColor * shading;
 
+            // Couleur du nuage (blanc)
+            vec3 sampleColor = vec3(objColor);
             // Absorption ajustée pour un rendu plus doux
             float absorption = 1.0 - exp(-densitySample * stepSize * 60.0); //TODO: slider controle absorbtion (60.0)
 
