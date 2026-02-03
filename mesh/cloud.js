@@ -9,6 +9,11 @@ class cloud extends base_mesh {
         this.nbClouds = 200;
         this.windDirection = 0.;
         this.windSpeed = 0.;
+        this.height_offset = false;
+        this.depthFactor = 0.5;
+        this.densityFactor = 0.7;
+        this.absorption = 60;
+        this.transmittance = 35.;
 
         this.Init();
     }
@@ -246,6 +251,11 @@ class cloud extends base_mesh {
         gl.uniform1f(gl.getUniformLocation(this.shader, "u_time"), time);
         gl.uniform1f(gl.getUniformLocation(this.shader, "u_windAngle"), this.windDirection);
         gl.uniform1f(gl.getUniformLocation(this.shader, "u_windSpeed"), this.windSpeed );
+        gl.uniform1i(gl.getUniformLocation(this.shader, "height_offset"), this.height_offset);
+        gl.uniform1f(gl.getUniformLocation(this.shader, "mult_depthFactor"), this.depthFactor);
+        gl.uniform1f(gl.getUniformLocation(this.shader, "mult_densityFactor"), this.densityFactor);
+        gl.uniform1f(gl.getUniformLocation(this.shader, "mult_absorption"), this.absorption);
+        gl.uniform1f(gl.getUniformLocation(this.shader, "mult_transmittance"), this.transmittance);
     }
 
     draw() {

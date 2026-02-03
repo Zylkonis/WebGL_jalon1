@@ -10,6 +10,11 @@ uniform vec3 objColor;
 uniform float u_windAngle;   // Angle du vent en radians (0 = axe X positif)
 uniform float u_windSpeed;   // Vitesse du vent
 uniform float u_time;        // Temps pour l'animation
+uniform bool height_offset;
+uniform float mult_depthFactor;
+uniform float mult_densityFactor;
+uniform float mult_absorption;
+uniform float mult_transmittance;
 
 in vec3 pos3D;      // Position en view space
 in vec3 localPos;   // Position locale NON transformée
@@ -44,7 +49,8 @@ vec3 applyWindMovement(vec3 texCoord, vec3 localPosition) {
     vec2 offset = windDirection * u_windSpeed * u_time;
 
     // Ajouter une variation en hauteur (les nuages plus hauts bougent plus vite)
-    offset *= (1.0 + heightFactor * 0.5);
+    if(height_offset)
+        offset *= (1.0 + heightFactor * 0.5);
 
     // Appliquer le décalage avec wrapping (pour que le nuage boucle)
     vec3 movedTexCoord = texCoord;
@@ -57,10 +63,10 @@ vec3 applyWindMovement(vec3 texCoord, vec3 localPosition) {
 // Calcule un éclairage simple basé sur la densité et la profondeur
 float calculateCloudShading(float density, float depth, float maxDepth) {
     // Atténuation en profondeur (les parties profondes sont plus sombres)
-    float depthFactor = 1.0 - (depth / maxDepth) * 0.8;     //TODO: slider controle facteur profondeur (0.5)
+    float depthFactor = 1.0 - (depth / maxDepth) * mult_depthFactor;     //: slider controle facteur profondeur (0.5)
 
     // Les zones denses diffusent moins de lumière (plus sombres)
-    float densityFactor = 1.0 - density * 0.4;  //TODO: slider controle densité (0.7)
+    float densityFactor = 1.0 - density * mult_densityFactor;  //: slider controle densité (0.7)
 
     return depthFactor * densityFactor;
 }
@@ -142,10 +148,10 @@ void main(void) {
             vec3 sampleColor = objColor * shading;
 
             // Absorption ajustée pour un rendu plus doux
-            float absorption = 1.0 - exp(-densitySample * stepSize * 60.0); //TODO: slider controle absorbtion (60.0)
+            float absorption = 1.0 - exp(-densitySample * stepSize * mult_absorption); //TODO: slider controle absorbtion (60.0)
 
             // Atténuation de la lumière à travers le nuage
-            transmittance *= exp(-densitySample * stepSize * 35.0); //TODO: slider controle transmitance (35.0)
+            transmittance *= exp(-densitySample * stepSize * mult_transmittance); //TODO: slider controle transmitance (35.0)
 
             // Accumulation front-to-back avec atténuation
             float weight = absorption * transmittance;

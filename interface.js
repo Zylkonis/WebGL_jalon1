@@ -13,8 +13,29 @@ function CloudChangeNb(value){
         .innerText=("Number of clouds : "+value);
 }
 
+function CloudChangeDepth(value) {
+    CLOUD.depthFactor = value;
+}
+
+function CloudChangeDensity(value) {
+    CLOUD.densityFactor = value;
+}
+
 function CloudChangeAngle(value) {
     CLOUD.windDirection = value
+}
+
+function CloudChangeAbsorption(value) {
+    CLOUD.absorption = value;
+}
+
+function CloudChangeTransmittance(value) {
+    CLOUD.transmittance = value;
+}
+
+function setCloudOffset(value) {
+    CLOUD.height_offset =
+        document.getElementById('cloudsHeightOffset').checked;
 }
 
 function CloudChangeSpeed(value) {
