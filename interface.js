@@ -13,6 +13,10 @@ function CloudChangeNb(value){
         .innerText=("Number of clouds : "+value);
 }
 
+function ChangeCloudResolution(value) {
+    cloud_sample_size = value;
+}
+
 function CloudChangeDepth(value) {
     CLOUD.depthFactor = value;
 }
@@ -42,8 +46,20 @@ function CloudChangeSpeed(value) {
     CLOUD.windSpeed = value
 }
 
+function CloudChangeDistInAir(value) {
+    CLOUD.distance_in_air = value;
+}
+
+function CloudChangeHeight(value) {
+    CLOUD.height = value;
+}
+
+function CloudChangeSize(value) {
+    CLOUD.size = value;
+}
+
 function RegenerateClouds(){
-    CLOUD.GenerateCloud();
+    CLOUD.Init();
 }
 
 function objFilePicker(file) {

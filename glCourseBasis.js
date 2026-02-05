@@ -171,7 +171,7 @@ function webGLStart() {
 	mat4.rotate(rotMatrix, rotX, [1, 0, 0]);
 	mat4.rotate(rotMatrix, rotY, [0, 0, 1]);
 
-	distCENTER = vec3.create([0,-0.2,-3]);
+	distCENTER = vec3.create([0,-0.2,-10]);
 
 	PLANE = new plane(1);
     HEIGHT = new heightMap(IMG_PATH+'texture2.png', [

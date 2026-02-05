@@ -1,4 +1,4 @@
-const cloud_sample_size = 64;
+let cloud_sample_size = 64;
 
 class cloud extends base_mesh {
     constructor(size, height) {
@@ -14,6 +14,7 @@ class cloud extends base_mesh {
         this.densityFactor = 0.7;
         this.absorption = 60;
         this.transmittance = 35.;
+        this.distance_in_air = 0.5;
 
         this.Init();
     }
@@ -270,6 +271,8 @@ class cloud extends base_mesh {
             mat4.identity(mvMatrix);
             mat4.translate(mvMatrix, distCENTER);
             mat4.multiply(mvMatrix, rotMatrix);
+
+            mat4.translate(mvMatrix, vec3.create([0,0, this.distance_in_air]));
 
             gl.uniformMatrix4fv(this.shader.rMatrixUniform, false, rotMatrix);
             gl.uniformMatrix4fv(this.shader.mvMatrixUniform, false, mvMatrix);

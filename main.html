@@ -32,6 +32,18 @@
                 <input type="range" id="nbClouds_value" name="nbClouds_value" min="0" max="500" value="200" oninput="CloudChangeNb(this.value);"/>
                 <p id="label_nbClouds">Number of clouds : 200</p>
 
+                <input type="number" id="cloud_resolution" name="cloud_resolution" min="1" max="250" value="64" oninput="ChangeCloudResolution(this.value);"/>
+                <label for="cloud_resolution">Clouds resolution (attention tres experimental)</label>
+
+                <input type="range" id="clouds_distInAir" name="clouds_distInAir" min="0" max="3" value="1" step="0.01" oninput="CloudChangeDistInAir(this.value);"/>
+                <label for="clouds_distInAir">Clouds distance in the air</label>
+
+                <input type="range" id="clouds_height" name="clouds_height" min="0" max="3" value="1" step="0.01" oninput="CloudChangeHeight(this.value);"/>
+                <label for="clouds_height">Clouds height</label>
+
+                <input type="range" id="clouds_size" name="clouds_size" min="0" max="5" value="1" step="0.1" oninput="CloudChangeSize(this.value);"/>
+                <label for="clouds_size">Clouds size</label>
+
                 <input class="button" type="button" value="Regenerate clouds" onclick="RegenerateClouds()"/>
                 <br>
                 <input type="color" id="cloudsColorPicker" onchange="CloudChangeColor(this.value);"/>
@@ -50,7 +62,7 @@
                 <label for="transmittanceCloud_value">Clouds transmittance</label>
 
                 <input type="checkbox" id="cloudsHeightOffset" value="false" onchange="setCloudOffset(this.value);">
-                <label for="cloudsHeightOffset">Funny but strange clouds</label>
+                <label for="cloudsHeightOffset">Funny but strange clouds (experimental)</label>
 
                 <input type="range" id="angleCloud_value" name="angleCloud_value" min="0" max="6.28318530718" value="0" step="0.01" oninput="CloudChangeAngle(this.value);"/>
                 <label for="angleCloud_value">Clouds angle</label>
