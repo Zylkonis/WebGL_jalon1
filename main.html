@@ -44,7 +44,7 @@
                 <input type="range" id="clouds_size" name="clouds_size" min="0" max="5" value="1" step="0.1" oninput="CloudChangeSize(this.value);"/>
                 <label for="clouds_size">Clouds size</label>
 
-                <input class="button" type="button" value="Regenerate clouds" onclick="RegenerateClouds()"/>
+                <input class="button" id="regenerate_clouds" type="button" value="Regenerate clouds" onclick="RegenerateClouds()"/>
                 <br>
                 <input type="color" id="cloudsColorPicker" onchange="CloudChangeColor(this.value);"/>
                 <label for="cloudsColorPicker">Clouds color</label>

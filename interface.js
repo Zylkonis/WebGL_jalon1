@@ -16,10 +16,12 @@ function CloudChangeNb(value){
     CLOUD.nbClouds = value;
     document.getElementById("label_nbClouds")
         .innerText=("Number of clouds : "+value);
+    document.getElementById("regenerate_clouds").style.color="red";
 }
 
 function ChangeCloudResolution(value) {
     cloud_sample_size = value;
+    document.getElementById("regenerate_clouds").style.color="red";
 }
 
 function CloudChangeDepth(value) {
@@ -56,14 +58,17 @@ function CloudChangeDistInAir(value) {
 }
 
 function CloudChangeHeight(value) {
+    document.getElementById("regenerate_clouds").style.color="red";
     CLOUD.height = value;
 }
 
 function CloudChangeSize(value) {
+    document.getElementById("regenerate_clouds").style.color="red";
     CLOUD.size = value;
 }
 
 function RegenerateClouds(){
+    document.getElementById("regenerate_clouds").style.color="black";
     CLOUD.Init();
 }
 
