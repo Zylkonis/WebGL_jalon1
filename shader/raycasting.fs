@@ -109,7 +109,7 @@ float lightMarch(vec3 position) {
     }
 
     // Nombre d'étapes pour le light marching
-    int lightSteps = u_stepsOfLight; //TODO u_lightMarchingSteps a regler
+    int lightSteps = u_stepsOfLight;
     float stepSize = rayLength / float(lightSteps);
 
     // Position de départ au centre du premier pas
@@ -225,10 +225,10 @@ void main(void) {
             vec3 sampleColor = objColor * shading;
 
             // Absorption ajustée pour un rendu plus doux
-            float absorption = 1.0 - exp(-densitySample * stepSize * mult_absorption); //TODO: slider controle absorbtion (60.0)
+            float absorption = 1.0 - exp(-densitySample * stepSize * mult_absorption);
 
             // Atténuation de la lumière à travers le nuage
-            transmittance *= exp(-densitySample * stepSize * mult_transmittance); //TODO: slider controle transmitance (35.0)
+            transmittance *= exp(-densitySample * stepSize * mult_transmittance);
 
             // Accumulation front-to-back avec atténuation
             float weight = absorption * transmittance;
