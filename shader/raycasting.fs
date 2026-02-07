@@ -10,6 +10,8 @@ uniform vec3 objColor;
 uniform float u_windAngle;   // Angle du vent en radians (0 = axe X positif)
 uniform float u_windSpeed;   // Vitesse du vent
 uniform float u_time;        // Temps pour l'animation
+uniform bool u_activateLightMarching;
+uniform int u_stepsOfLight;
 uniform bool height_offset;
 uniform float mult_depthFactor;
 uniform float mult_densityFactor;
@@ -69,6 +71,78 @@ float calculateCloudShading(float density, float depth, float maxDepth) {
     float densityFactor = 1.0 - density * mult_densityFactor;  //: slider controle densité (0.7)
 
     return depthFactor * densityFactor;
+}
+
+float lightMarch(vec3 position) {
+    // Si le light marching n'est pas activé, retourner une transmittance complète (pas d'ombre)
+    if (!u_activateLightMarching) {
+        return 1.0;
+    }
+
+    // Définir les limites de la boîte des nuages
+    vec3 boxMin = vec3(-u_boxSize.x, -u_boxSize.y, 0.0);
+    vec3 boxMax = vec3(u_boxSize.x, u_boxSize.y, u_boxSize.z);
+
+    // Direction de la lumière normalisée
+    vec3 lightDir = normalize(vec3(0., 0., 1.)); //La lumiere est un point fixe
+
+    vec3 invRayDir = 1.0 / lightDir;
+    vec3 tMin = (boxMin - position) * invRayDir;
+    vec3 tMax = (boxMax - position) * invRayDir;
+
+    vec3 t1 = min(tMin, tMax);
+    vec3 t2 = max(tMin, tMax);
+
+    float tNear = max(max(t1.x, t1.y), t1.z);
+    float tFar = min(min(t2.x, t2.y), t2.z);
+
+    if (tNear > tFar || tFar < 0.0) {
+        return 1.0; // Pas d'intersection avec la box
+    }
+
+    // S'assurer que tEntry est positif
+    tNear = max(tNear, 0.0);
+    float rayLength = tFar - tNear;
+
+    if (rayLength < 0.0001) {
+        return 1.0; // Rayon trop court
+    }
+
+    // Nombre d'étapes pour le light marching
+    int lightSteps = u_stepsOfLight; //TODO u_lightMarchingSteps a regler
+    float stepSize = rayLength / float(lightSteps);
+
+    // Position de départ au centre du premier pas
+    vec3 currentPos = position + lightDir * (tNear + stepSize * 0.5);
+
+    // Vecteur de pas
+    vec3 stepVec = lightDir * stepSize;
+
+    // Accumulation de la densité
+    float densityAccum = 0.0;
+
+    // Boucle de ray marching le long de la lumière
+    for (int i = 0; i < lightSteps; i++) {
+         vec3 texCoord = localToTexCoord(currentPos);
+        // Vérification des limites (sécurité)
+        if (texCoord.x < 0.0 || texCoord.x > 1.0 ||
+            texCoord.y < 0.0 || texCoord.y > 1.0 ||
+            texCoord.z < 0.0 || texCoord.z > 1.0) {
+            continue;
+        }
+
+        // Appliquer le mouvement du vent en utilisant la position locale
+        vec3 movedTexCoord = applyWindMovement(texCoord, currentPos);
+        float densitySample = texture(texture_3D, movedTexCoord).r;
+        densityAccum += densitySample * stepSize;
+        // Si la densité accumulée est trop élevée, arrêter pour optimiser
+        if (densityAccum * mult_absorption > 4.0) break;
+        currentPos += stepVec;
+    }
+
+    // Calculer la transmittance en utilisant la loi de Beer-Lambert
+    float transmittance = exp(-densityAccum * mult_absorption);
+    return transmittance;
 }
 
 void main(void) {
@@ -142,6 +216,9 @@ void main(void) {
         if (densitySample > 0.01) {
             // Calcul de l'ombrage du nuage
             float shading = calculateCloudShading(densitySample, depth, totalDistance);
+
+            float lightTransmittance = lightMarch(currentPos);
+            shading *= lightTransmittance;  // Assombrir selon l'ombre
 
             // Couleur du nuage avec variation de gris (pas blanc pur)
             // Les nuages réels varient du gris clair au gris foncé

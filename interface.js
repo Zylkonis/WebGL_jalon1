@@ -7,6 +7,11 @@ function CloudChangeColor(value){
     CLOUD.objColor = hexToNormalizedRGB(value);
 }
 
+function CloudActivateLightMarching(value){
+    CLOUD.activateLightMarching =
+        document.getElementById('cloudsActivateLightMarching').checked;
+}
+
 function CloudChangeNb(value){
     CLOUD.nbClouds = value;
     document.getElementById("label_nbClouds")

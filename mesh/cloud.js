@@ -15,6 +15,8 @@ class cloud extends base_mesh {
         this.absorption = 60;
         this.transmittance = 35.;
         this.distance_in_air = 0.5;
+        this.activateLightMarching = false;
+        this.stepsOfLight = 10;
 
         this.Init();
     }
@@ -251,7 +253,9 @@ class cloud extends base_mesh {
         let time = performance.now() / 1000.0; // Temps en secondes
         gl.uniform1f(gl.getUniformLocation(this.shader, "u_time"), time);
         gl.uniform1f(gl.getUniformLocation(this.shader, "u_windAngle"), this.windDirection);
-        gl.uniform1f(gl.getUniformLocation(this.shader, "u_windSpeed"), this.windSpeed );
+        gl.uniform1f(gl.getUniformLocation(this.shader, "u_windSpeed"), this.windSpeed);
+        gl.uniform1i(gl.getUniformLocation(this.shader, "u_activateLightMarching"), this.activateLightMarching);
+        gl.uniform1i(gl.getUniformLocation(this.shader, "u_stepsOfLight"), this.stepsOfLight);
         gl.uniform1i(gl.getUniformLocation(this.shader, "height_offset"), this.height_offset);
         gl.uniform1f(gl.getUniformLocation(this.shader, "mult_depthFactor"), this.depthFactor);
         gl.uniform1f(gl.getUniformLocation(this.shader, "mult_densityFactor"), this.densityFactor);
